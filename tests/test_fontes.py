@@ -54,3 +54,34 @@ def test_escopo_tem_uma_vigente_por_ano_e_tres_versoes_de_2021_e_2022():
         "2024/one_year",
         "2025/snapshot",
     ]
+
+
+def test_toda_fonte_do_escopo_tem_data_de_congelamento():
+    from hmda.fontes import congelado_em, escopo
+
+    for fonte in escopo():
+        congelado_em(fonte)  # KeyError se faltar
+
+
+def test_ordem_de_publicacao_segue_as_datas_do_ffiec():
+    from hmda.fontes import escopo, ordem_de_publicacao
+
+    ordem = [f.chave for f in ordem_de_publicacao(escopo())]
+    assert ordem == [
+        "2018/three_year",  # 31/12/2021
+        "2021/snapshot",  # 30/04/2022
+        "2019/three_year",  # 31/12/2022
+        "2021/one_year",  # 01/05/2023 (empate: ano menor primeiro)
+        "2022/snapshot",  # 01/05/2023
+        "2020/three_year",  # 31/12/2023
+        "2022/one_year",  # 01/05/2024
+        "2021/three_year",  # 31/12/2024
+        "2023/one_year",  # 19/05/2025
+        "2022/three_year",  # 31/12/2025
+        "2024/one_year",  # 02/06/2026
+        "2025/snapshot",  # 02/06/2026
+    ]
+    # Dentro de um mesmo ano, a maturidade nunca anda para trás.
+    for ano in (2021, 2022):
+        versoes = [f.ordem for f in ordem_de_publicacao(escopo()) if f.ano == ano]
+        assert versoes == sorted(versoes)

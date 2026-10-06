@@ -8,6 +8,9 @@ from pathlib import Path
 
 BRONZE = "bronze/pedidos"
 CARGAS = "controle/cargas"
+SILVER = "silver/vigente"
+REJEITADOS = "silver/rejeitados"
+SILVER_VERSOES = "controle/silver_versoes"
 
 
 def caminho(raiz: Path, nome: str) -> str:

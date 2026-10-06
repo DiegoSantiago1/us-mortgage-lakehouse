@@ -1,41 +1,14 @@
 """Testes da bronze com zips pequenos montados à mão (mesmo cabeçalho do FFIEC)."""
 
-import hashlib
 import zipfile
-from pathlib import Path
 
 import pytest
 from delta.tables import DeltaTable
 
+from fabrica import CABECALHO, linha, montar_zip
 from hmda import bronze, tabelas
 from hmda.esquema import COLUNAS_LAR
 from hmda.fontes import Fonte
-
-CABECALHO = ",".join(COLUNAS_LAR)
-
-
-def linha(**valores: str) -> str:
-    base = {c: "NA" for c in COLUNAS_LAR}
-    base.update(activity_year="2021", lei="5493001KJTIIGC8Y1R12", state_code="DE", action_taken="1")
-    base.update(valores)
-    return ",".join(base[c] for c in COLUNAS_LAR)
-
-
-def montar_zip(
-    pasta: Path,
-    linhas: list[str],
-    nome: str = "lar.zip",
-    cabecalho: str = CABECALHO,
-    lixo_macos: bool = True,
-    final_sem_quebra: bool = False,
-) -> tuple[Path, str]:
-    corpo = cabecalho + "\n" + "\n".join(linhas) + ("" if final_sem_quebra else "\n")
-    caminho = pasta / nome
-    with zipfile.ZipFile(caminho, "w", zipfile.ZIP_DEFLATED) as z:
-        z.writestr("2021_public_lar_csv.csv", corpo)
-        if lixo_macos:
-            z.writestr("__MACOSX/._2021_public_lar_csv.csv", b"\x00\x05\x16\x07lixo")
-    return caminho, hashlib.sha256(caminho.read_bytes()).hexdigest()
 
 
 @pytest.fixture
@@ -63,7 +36,7 @@ def test_carrega_tudo_como_texto_com_metadados(spark, tmp_path, lake):
     assert linhas["205000"]["_ano"] == 2021
     assert linhas["205000"]["_versao"] == "snapshot"
     assert linhas["205000"]["_sha256_arquivo"] == sha
-    assert linhas["NA"]["income"] == "Exempt"  # nada de converter na bronze
+    assert linhas["205000.0"]["income"] == "Exempt"  # nada de converter na bronze
     assert not tmp.exists() or not any(tmp.iterdir())  # CSV temporário apagado
 
 

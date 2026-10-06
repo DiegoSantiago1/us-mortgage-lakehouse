@@ -5,6 +5,7 @@ src/data-publication/constants/*-dataset*.jsx) e com HEAD em cada URL.
 """
 
 from dataclasses import dataclass
+from datetime import date
 
 BASE = "https://files.ffiec.cfpb.gov/static-data"
 
@@ -69,3 +70,39 @@ def escopo() -> list[Fonte]:
         else:
             fontes.append(Fonte(ano, maduras[-1]))
     return fontes
+
+
+# Data em que o FFIEC "congelou" cada versão (o dado é como estava nesse dia).
+# Lido de cfpb/hmda-frontend (src/data-publication/constants/*, freezeDate) em 06/10/2026.
+CONGELAMENTO: dict[tuple[int, str], date] = {
+    (2018, "snapshot"): date(2019, 8, 7),
+    (2019, "snapshot"): date(2020, 4, 27),
+    (2020, "snapshot"): date(2021, 5, 3),
+    (2021, "snapshot"): date(2022, 4, 30),
+    (2022, "snapshot"): date(2023, 5, 1),
+    (2023, "snapshot"): date(2024, 5, 1),
+    (2024, "snapshot"): date(2025, 5, 19),
+    (2025, "snapshot"): date(2026, 6, 2),
+    (2019, "one_year"): date(2022, 4, 5),
+    (2020, "one_year"): date(2022, 4, 30),
+    (2021, "one_year"): date(2023, 5, 1),
+    (2022, "one_year"): date(2024, 5, 1),
+    (2023, "one_year"): date(2025, 5, 19),
+    (2024, "one_year"): date(2026, 6, 2),
+    (2018, "three_year"): date(2021, 12, 31),
+    (2019, "three_year"): date(2022, 12, 31),
+    (2020, "three_year"): date(2023, 12, 31),
+    (2021, "three_year"): date(2024, 12, 31),
+    (2022, "three_year"): date(2025, 12, 31),
+}
+
+
+def congelado_em(fonte: Fonte) -> date:
+    return CONGELAMENTO[(fonte.ano, fonte.versao)]
+
+
+def ordem_de_publicacao(fontes: list[Fonte]) -> list[Fonte]:
+    """Ordena como o FFIEC publicou: assim cada commit da silver vigente é um
+    retrato do que existia naquela data, e o time travel responde "o que um
+    analista via em maio de 2023?" (D28)."""
+    return sorted(fontes, key=lambda f: (congelado_em(f), f.ano, f.ordem))

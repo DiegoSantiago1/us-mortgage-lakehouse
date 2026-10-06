@@ -1,0 +1,1912 @@
+{
+ "ano": 2019,
+ "consultado_em": "2026-10-06T10:32:39+00:00",
+ "fonte": "https://ffiec.cfpb.gov/v2/data-browser-api/view/aggregations",
+ "observacao": "vers\u00e3o mais recente do ano; s\u00f3 pedidos com estado",
+ "por_estado": {
+  "AK": {
+   "1": {
+    "contagem": 15485,
+    "soma_valor": 4205305000.0
+   },
+   "2": {
+    "contagem": 408,
+    "soma_valor": 100270000.0
+   },
+   "3": {
+    "contagem": 3446,
+    "soma_valor": 666040000.0
+   },
+   "4": {
+    "contagem": 4100,
+    "soma_valor": 1043520000.0
+   },
+   "5": {
+    "contagem": 1285,
+    "soma_valor": 318295000.0
+   },
+   "6": {
+    "contagem": 6190,
+    "soma_valor": 1742850000.0
+   },
+   "7": {
+    "contagem": 35,
+    "soma_valor": 6975000.0
+   },
+   "8": {
+    "contagem": 19,
+    "soma_valor": 4175000.0
+   }
+  },
+  "AL": {
+   "1": {
+    "contagem": 121277,
+    "soma_valor": 23952385000.0
+   },
+   "2": {
+    "contagem": 5774,
+    "soma_valor": 826570000.0
+   },
+   "3": {
+    "contagem": 39489,
+    "soma_valor": 4463225000.0
+   },
+   "4": {
+    "contagem": 26385,
+    "soma_valor": 5400545000.0
+   },
+   "5": {
+    "contagem": 11101,
+    "soma_valor": 1545185000.0
+   },
+   "6": {
+    "contagem": 30186,
+    "soma_valor": 5749690000.0
+   },
+   "7": {
+    "contagem": 289,
+    "soma_valor": 24155000.0
+   },
+   "8": {
+    "contagem": 103,
+    "soma_valor": 22325000.0
+   }
+  },
+  "AR": {
+   "1": {
+    "contagem": 68075,
+    "soma_valor": 12077575000.0
+   },
+   "2": {
+    "contagem": 2940,
+    "soma_valor": 398550000.0
+   },
+   "3": {
+    "contagem": 21326,
+    "soma_valor": 2235030000.0
+   },
+   "4": {
+    "contagem": 13816,
+    "soma_valor": 2393090000.0
+   },
+   "5": {
+    "contagem": 5051,
+    "soma_valor": 645235000.0
+   },
+   "6": {
+    "contagem": 19996,
+    "soma_valor": 3311350000.0
+   },
+   "7": {
+    "contagem": 28,
+    "soma_valor": 3170000.0
+   },
+   "8": {
+    "contagem": 24,
+    "soma_valor": 4580000.0
+   }
+  },
+  "AS": {
+   "1": {
+    "contagem": 0,
+    "soma_valor": 0.0
+   },
+   "2": {
+    "contagem": 0,
+    "soma_valor": 0.0
+   },
+   "3": {
+    "contagem": 1,
+    "soma_valor": 35000.0
+   },
+   "4": {
+    "contagem": 1,
+    "soma_valor": 185000.0
+   },
+   "5": {
+    "contagem": 0,
+    "soma_valor": 0.0
+   },
+   "6": {
+    "contagem": 0,
+    "soma_valor": 0.0
+   },
+   "7": {
+    "contagem": 0,
+    "soma_valor": 0.0
+   },
+   "8": {
+    "contagem": 0,
+    "soma_valor": 0.0
+   }
+  },
+  "AZ": {
+   "1": {
+    "contagem": 295782,
+    "soma_valor": 78449190000.0
+   },
+   "2": {
+    "contagem": 12024,
+    "soma_valor": 2772750000.0
+   },
+   "3": {
+    "contagem": 66903,
+    "soma_valor": 12237525000.0
+   },
+   "4": {
+    "contagem": 75477,
+    "soma_valor": 19980545000.0
+   },
+   "5": {
+    "contagem": 23375,
+    "soma_valor": 5360195000.0
+   },
+   "6": {
+    "contagem": 87877,
+    "soma_valor": 21594435000.0
+   },
+   "7": {
+    "contagem": 138,
+    "soma_valor": 30980000.0
+   },
+   "8": {
+    "contagem": 307,
+    "soma_valor": 84125000.0
+   }
+  },
+  "CA": {
+   "1": {
+    "contagem": 1147003,
+    "soma_valor": 554344625000.0
+   },
+   "2": {
+    "contagem": 52290,
+    "soma_valor": 24167200000.0
+   },
+   "3": {
+    "contagem": 294435,
+    "soma_valor": 102698845000.0
+   },
+   "4": {
+    "contagem": 277603,
+    "soma_valor": 134430085000.0
+   },
+   "5": {
+    "contagem": 101624,
+    "soma_valor": 41159340000.0
+   },
+   "6": {
+    "contagem": 262165,
+    "soma_valor": 104764445000.0
+   },
+   "7": {
+    "contagem": 726,
+    "soma_valor": 294740000.0
+   },
+   "8": {
+    "contagem": 1901,
+    "soma_valor": 1056165000.0
+   }
+  },
+  "CO": {
+   "1": {
+    "contagem": 303917,
+    "soma_valor": 100066965000.0
+   },
+   "2": {
+    "contagem": 12325,
+    "soma_valor": 3537955000.0
+   },
+   "3": {
+    "contagem": 61788,
+    "soma_valor": 14630400000.0
+   },
+   "4": {
+    "contagem": 75465,
+    "soma_valor": 24080645000.0
+   },
+   "5": {
+    "contagem": 19076,
+    "soma_valor": 5569770000.0
+   },
+   "6": {
+    "contagem": 72813,
+    "soma_valor": 24554095000.0
+   },
+   "7": {
+    "contagem": 163,
+    "soma_valor": 53895000.0
+   },
+   "8": {
+    "contagem": 349,
+    "soma_valor": 120805000.0
+   }
+  },
+  "CT": {
+   "1": {
+    "contagem": 82930,
+    "soma_valor": 24163760000.0
+   },
+   "2": {
+    "contagem": 3042,
+    "soma_valor": 803340000.0
+   },
+   "3": {
+    "contagem": 26418,
+    "soma_valor": 5120280000.0
+   },
+   "4": {
+    "contagem": 19154,
+    "soma_valor": 5477570000.0
+   },
+   "5": {
+    "contagem": 7269,
+    "soma_valor": 1922515000.0
+   },
+   "6": {
+    "contagem": 17853,
+    "soma_valor": 4670655000.0
+   },
+   "7": {
+    "contagem": 75,
+    "soma_valor": 17455000.0
+   },
+   "8": {
+    "contagem": 128,
+    "soma_valor": 56490000.0
+   }
+  },
+  "DC": {
+   "1": {
+    "contagem": 19286,
+    "soma_valor": 10704700000.0
+   },
+   "2": {
+    "contagem": 691,
+    "soma_valor": 296615000.0
+   },
+   "3": {
+    "contagem": 5026,
+    "soma_valor": 1761760000.0
+   },
+   "4": {
+    "contagem": 4886,
+    "soma_valor": 2529710000.0
+   },
+   "5": {
+    "contagem": 1469,
+    "soma_valor": 570995000.0
+   },
+   "6": {
+    "contagem": 6007,
+    "soma_valor": 2999805000.0
+   },
+   "7": {
+    "contagem": 12,
+    "soma_valor": 5610000.0
+   },
+   "8": {
+    "contagem": 29,
+    "soma_valor": 15465000.0
+   }
+  },
+  "DE": {
+   "1": {
+    "contagem": 31599,
+    "soma_valor": 7865845000.0
+   },
+   "2": {
+    "contagem": 1091,
+    "soma_valor": 230445000.0
+   },
+   "3": {
+    "contagem": 9144,
+    "soma_valor": 1469510000.0
+   },
+   "4": {
+    "contagem": 7150,
+    "soma_valor": 1675180000.0
+   },
+   "5": {
+    "contagem": 2703,
+    "soma_valor": 565745000.0
+   },
+   "6": {
+    "contagem": 10155,
+    "soma_valor": 2469445000.0
+   },
+   "7": {
+    "contagem": 21,
+    "soma_valor": 4535000.0
+   },
+   "8": {
+    "contagem": 49,
+    "soma_valor": 13445000.0
+   }
+  },
+  "FL": {
+   "1": {
+    "contagem": 626064,
+    "soma_valor": 164196790000.0
+   },
+   "2": {
+    "contagem": 31326,
+    "soma_valor": 7074380000.0
+   },
+   "3": {
+    "contagem": 232494,
+    "soma_valor": 42215180000.0
+   },
+   "4": {
+    "contagem": 177181,
+    "soma_valor": 49855835000.0
+   },
+   "5": {
+    "contagem": 56687,
+    "soma_valor": 12991985000.0
+   },
+   "6": {
+    "contagem": 164186,
+    "soma_valor": 38335470000.0
+   },
+   "7": {
+    "contagem": 1830,
+    "soma_valor": 294990000.0
+   },
+   "8": {
+    "contagem": 1607,
+    "soma_valor": 391965000.0
+   }
+  },
+  "GA": {
+   "1": {
+    "contagem": 302485,
+    "soma_valor": 73538825000.0
+   },
+   "2": {
+    "contagem": 13683,
+    "soma_valor": 2682235000.0
+   },
+   "3": {
+    "contagem": 99826,
+    "soma_valor": 15094320000.0
+   },
+   "4": {
+    "contagem": 81343,
+    "soma_valor": 19759315000.0
+   },
+   "5": {
+    "contagem": 29352,
+    "soma_valor": 5745440000.0
+   },
+   "6": {
+    "contagem": 90513,
+    "soma_valor": 20033925000.0
+   },
+   "7": {
+    "contagem": 266,
+    "soma_valor": 53410000.0
+   },
+   "8": {
+    "contagem": 361,
+    "soma_valor": 80585000.0
+   }
+  },
+  "GU": {
+   "1": {
+    "contagem": 0,
+    "soma_valor": 0.0
+   },
+   "2": {
+    "contagem": 0,
+    "soma_valor": 0.0
+   },
+   "3": {
+    "contagem": 0,
+    "soma_valor": 0.0
+   },
+   "4": {
+    "contagem": 0,
+    "soma_valor": 0.0
+   },
+   "5": {
+    "contagem": 0,
+    "soma_valor": 0.0
+   },
+   "6": {
+    "contagem": 0,
+    "soma_valor": 0.0
+   },
+   "7": {
+    "contagem": 0,
+    "soma_valor": 0.0
+   },
+   "8": {
+    "contagem": 0,
+    "soma_valor": 0.0
+   }
+  },
+  "HI": {
+   "1": {
+    "contagem": 36650,
+    "soma_valor": 16767170000.0
+   },
+   "2": {
+    "contagem": 1287,
+    "soma_valor": 560685000.0
+   },
+   "3": {
+    "contagem": 9703,
+    "soma_valor": 3237925000.0
+   },
+   "4": {
+    "contagem": 7542,
+    "soma_valor": 3654920000.0
+   },
+   "5": {
+    "contagem": 2641,
+    "soma_valor": 1159725000.0
+   },
+   "6": {
+    "contagem": 5069,
+    "soma_valor": 2539475000.0
+   },
+   "7": {
+    "contagem": 3,
+    "soma_valor": 1345000.0
+   },
+   "8": {
+    "contagem": 9,
+    "soma_valor": 6435000.0
+   }
+  },
+  "IA": {
+   "1": {
+    "contagem": 97201,
+    "soma_valor": 15911505000.0
+   },
+   "2": {
+    "contagem": 3114,
+    "soma_valor": 506570000.0
+   },
+   "3": {
+    "contagem": 15299,
+    "soma_valor": 1766295000.0
+   },
+   "4": {
+    "contagem": 15027,
+    "soma_valor": 2241755000.0
+   },
+   "5": {
+    "contagem": 2907,
+    "soma_valor": 446065000.0
+   },
+   "6": {
+    "contagem": 19169,
+    "soma_valor": 3743425000.0
+   },
+   "7": {
+    "contagem": 46,
+    "soma_valor": 5090000.0
+   },
+   "8": {
+    "contagem": 115,
+    "soma_valor": 18975000.0
+   }
+  },
+  "ID": {
+   "1": {
+    "contagem": 83053,
+    "soma_valor": 18246185000.0
+   },
+   "2": {
+    "contagem": 6356,
+    "soma_valor": 1356880000.0
+   },
+   "3": {
+    "contagem": 16240,
+    "soma_valor": 2742110000.0
+   },
+   "4": {
+    "contagem": 16177,
+    "soma_valor": 3707715000.0
+   },
+   "5": {
+    "contagem": 3824,
+    "soma_valor": 826790000.0
+   },
+   "6": {
+    "contagem": 13486,
+    "soma_valor": 3415290000.0
+   },
+   "7": {
+    "contagem": 745,
+    "soma_valor": 150955000.0
+   },
+   "8": {
+    "contagem": 126,
+    "soma_valor": 29530000.0
+   }
+  },
+  "IL": {
+   "1": {
+    "contagem": 313719,
+    "soma_valor": 78158015000.0
+   },
+   "2": {
+    "contagem": 10266,
+    "soma_valor": 2111140000.0
+   },
+   "3": {
+    "contagem": 79760,
+    "soma_valor": 12647200000.0
+   },
+   "4": {
+    "contagem": 67989,
+    "soma_valor": 17718655000.0
+   },
+   "5": {
+    "contagem": 20251,
+    "soma_valor": 4225925000.0
+   },
+   "6": {
+    "contagem": 84259,
+    "soma_valor": 19930195000.0
+   },
+   "7": {
+    "contagem": 259,
+    "soma_valor": 40815000.0
+   },
+   "8": {
+    "contagem": 394,
+    "soma_valor": 81640000.0
+   }
+  },
+  "IN": {
+   "1": {
+    "contagem": 206797,
+    "soma_valor": 35928525000.0
+   },
+   "2": {
+    "contagem": 9724,
+    "soma_valor": 1411630000.0
+   },
+   "3": {
+    "contagem": 48971,
+    "soma_valor": 5483705000.0
+   },
+   "4": {
+    "contagem": 37988,
+    "soma_valor": 6678720000.0
+   },
+   "5": {
+    "contagem": 12189,
+    "soma_valor": 1828465000.0
+   },
+   "6": {
+    "contagem": 45924,
+    "soma_valor": 8085100000.0
+   },
+   "7": {
+    "contagem": 385,
+    "soma_valor": 57285000.0
+   },
+   "8": {
+    "contagem": 202,
+    "soma_valor": 35420000.0
+   }
+  },
+  "KS": {
+   "1": {
+    "contagem": 70623,
+    "soma_valor": 13757085000.0
+   },
+   "2": {
+    "contagem": 2759,
+    "soma_valor": 427095000.0
+   },
+   "3": {
+    "contagem": 14571,
+    "soma_valor": 1785155000.0
+   },
+   "4": {
+    "contagem": 13366,
+    "soma_valor": 2724230000.0
+   },
+   "5": {
+    "contagem": 3302,
+    "soma_valor": 557810000.0
+   },
+   "6": {
+    "contagem": 15281,
+    "soma_valor": 2860085000.0
+   },
+   "7": {
+    "contagem": 151,
+    "soma_valor": 19255000.0
+   },
+   "8": {
+    "contagem": 96,
+    "soma_valor": 17460000.0
+   }
+  },
+  "KY": {
+   "1": {
+    "contagem": 114577,
+    "soma_valor": 19965355000.0
+   },
+   "2": {
+    "contagem": 4552,
+    "soma_valor": 630520000.0
+   },
+   "3": {
+    "contagem": 32328,
+    "soma_valor": 4117210000.0
+   },
+   "4": {
+    "contagem": 22510,
+    "soma_valor": 3977660000.0
+   },
+   "5": {
+    "contagem": 9846,
+    "soma_valor": 1312920000.0
+   },
+   "6": {
+    "contagem": 23712,
+    "soma_valor": 4332640000.0
+   },
+   "7": {
+    "contagem": 30,
+    "soma_valor": 4740000.0
+   },
+   "8": {
+    "contagem": 66,
+    "soma_valor": 12860000.0
+   }
+  },
+  "LA": {
+   "1": {
+    "contagem": 95686,
+    "soma_valor": 19632180000.0
+   },
+   "2": {
+    "contagem": 5395,
+    "soma_valor": 814385000.0
+   },
+   "3": {
+    "contagem": 33127,
+    "soma_valor": 4134505000.0
+   },
+   "4": {
+    "contagem": 20349,
+    "soma_valor": 4140735000.0
+   },
+   "5": {
+    "contagem": 9628,
+    "soma_valor": 534410000.0
+   },
+   "6": {
+    "contagem": 23973,
+    "soma_valor": 4720115000.0
+   },
+   "7": {
+    "contagem": 83,
+    "soma_valor": 15165000.0
+   },
+   "8": {
+    "contagem": 66,
+    "soma_valor": 13180000.0
+   }
+  },
+  "MA": {
+   "1": {
+    "contagem": 218237,
+    "soma_valor": 80248535000.0
+   },
+   "2": {
+    "contagem": 6172,
+    "soma_valor": 2098830000.0
+   },
+   "3": {
+    "contagem": 51598,
+    "soma_valor": 12073460000.0
+   },
+   "4": {
+    "contagem": 39315,
+    "soma_valor": 13756565000.0
+   },
+   "5": {
+    "contagem": 13892,
+    "soma_valor": 4266700000.0
+   },
+   "6": {
+    "contagem": 52732,
+    "soma_valor": 19950940000.0
+   },
+   "7": {
+    "contagem": 278,
+    "soma_valor": 85450000.0
+   },
+   "8": {
+    "contagem": 556,
+    "soma_valor": 235130000.0
+   }
+  },
+  "MD": {
+   "1": {
+    "contagem": 180768,
+    "soma_valor": 59151630000.0
+   },
+   "2": {
+    "contagem": 7491,
+    "soma_valor": 2043735000.0
+   },
+   "3": {
+    "contagem": 52878,
+    "soma_valor": 11175290000.0
+   },
+   "4": {
+    "contagem": 47801,
+    "soma_valor": 15696375000.0
+   },
+   "5": {
+    "contagem": 15734,
+    "soma_valor": 4408260000.0
+   },
+   "6": {
+    "contagem": 56871,
+    "soma_valor": 17414825000.0
+   },
+   "7": {
+    "contagem": 264,
+    "soma_valor": 64690000.0
+   },
+   "8": {
+    "contagem": 366,
+    "soma_valor": 108460000.0
+   }
+  },
+  "ME": {
+   "1": {
+    "contagem": 40050,
+    "soma_valor": 8404460000.0
+   },
+   "2": {
+    "contagem": 1253,
+    "soma_valor": 311765000.0
+   },
+   "3": {
+    "contagem": 9670,
+    "soma_valor": 1510930000.0
+   },
+   "4": {
+    "contagem": 8550,
+    "soma_valor": 1782120000.0
+   },
+   "5": {
+    "contagem": 2569,
+    "soma_valor": 511895000.0
+   },
+   "6": {
+    "contagem": 6774,
+    "soma_valor": 1507350000.0
+   },
+   "7": {
+    "contagem": 123,
+    "soma_valor": 21445000.0
+   },
+   "8": {
+    "contagem": 69,
+    "soma_valor": 16695000.0
+   }
+  },
+  "MI": {
+   "1": {
+    "contagem": 301639,
+    "soma_valor": 55240775000.0
+   },
+   "2": {
+    "contagem": 14539,
+    "soma_valor": 2095205000.0
+   },
+   "3": {
+    "contagem": 75191,
+    "soma_valor": 9205875000.0
+   },
+   "4": {
+    "contagem": 58310,
+    "soma_valor": 10521340000.0
+   },
+   "5": {
+    "contagem": 20320,
+    "soma_valor": 3301830000.0
+   },
+   "6": {
+    "contagem": 47070,
+    "soma_valor": 8962350000.0
+   },
+   "7": {
+    "contagem": 449,
+    "soma_valor": 70655000.0
+   },
+   "8": {
+    "contagem": 753,
+    "soma_valor": 133535000.0
+   }
+  },
+  "MN": {
+   "1": {
+    "contagem": 191155,
+    "soma_valor": 45021645000.0
+   },
+   "2": {
+    "contagem": 5129,
+    "soma_valor": 1116335000.0
+   },
+   "3": {
+    "contagem": 33353,
+    "soma_valor": 5426845000.0
+   },
+   "4": {
+    "contagem": 33880,
+    "soma_valor": 8471150000.0
+   },
+   "5": {
+    "contagem": 10192,
+    "soma_valor": 2009230000.0
+   },
+   "6": {
+    "contagem": 44819,
+    "soma_valor": 10857385000.0
+   },
+   "7": {
+    "contagem": 289,
+    "soma_valor": 44075000.0
+   },
+   "8": {
+    "contagem": 471,
+    "soma_valor": 99805000.0
+   }
+  },
+  "MO": {
+   "1": {
+    "contagem": 176636,
+    "soma_valor": 34159700000.0
+   },
+   "2": {
+    "contagem": 6956,
+    "soma_valor": 1132850000.0
+   },
+   "3": {
+    "contagem": 39514,
+    "soma_valor": 4870320000.0
+   },
+   "4": {
+    "contagem": 36165,
+    "soma_valor": 7172415000.0
+   },
+   "5": {
+    "contagem": 9320,
+    "soma_valor": 1464160000.0
+   },
+   "6": {
+    "contagem": 51674,
+    "soma_valor": 10140190000.0
+   },
+   "7": {
+    "contagem": 90,
+    "soma_valor": 13540000.0
+   },
+   "8": {
+    "contagem": 196,
+    "soma_valor": 38110000.0
+   }
+  },
+  "MP": {
+   "1": {
+    "contagem": 0,
+    "soma_valor": 0.0
+   },
+   "2": {
+    "contagem": 0,
+    "soma_valor": 0.0
+   },
+   "3": {
+    "contagem": 0,
+    "soma_valor": 0.0
+   },
+   "4": {
+    "contagem": 0,
+    "soma_valor": 0.0
+   },
+   "5": {
+    "contagem": 0,
+    "soma_valor": 0.0
+   },
+   "6": {
+    "contagem": 0,
+    "soma_valor": 0.0
+   },
+   "7": {
+    "contagem": 0,
+    "soma_valor": 0.0
+   },
+   "8": {
+    "contagem": 0,
+    "soma_valor": 0.0
+   }
+  },
+  "MS": {
+   "1": {
+    "contagem": 57788,
+    "soma_valor": 9514800000.0
+   },
+   "2": {
+    "contagem": 4275,
+    "soma_valor": 500055000.0
+   },
+   "3": {
+    "contagem": 22953,
+    "soma_valor": 2251615000.0
+   },
+   "4": {
+    "contagem": 10581,
+    "soma_valor": 1732205000.0
+   },
+   "5": {
+    "contagem": 5780,
+    "soma_valor": 649780000.0
+   },
+   "6": {
+    "contagem": 13068,
+    "soma_valor": 2290110000.0
+   },
+   "7": {
+    "contagem": 30,
+    "soma_valor": 3840000.0
+   },
+   "8": {
+    "contagem": 48,
+    "soma_valor": 8280000.0
+   }
+  },
+  "MT": {
+   "1": {
+    "contagem": 30668,
+    "soma_valor": 7814600000.0
+   },
+   "2": {
+    "contagem": 696,
+    "soma_valor": 177920000.0
+   },
+   "3": {
+    "contagem": 6011,
+    "soma_valor": 1195715000.0
+   },
+   "4": {
+    "contagem": 7664,
+    "soma_valor": 2005390000.0
+   },
+   "5": {
+    "contagem": 1617,
+    "soma_valor": 399955000.0
+   },
+   "6": {
+    "contagem": 7099,
+    "soma_valor": 1795925000.0
+   },
+   "7": {
+    "contagem": 12,
+    "soma_valor": 2580000.0
+   },
+   "8": {
+    "contagem": 33,
+    "soma_valor": 7105000.0
+   }
+  },
+  "NC": {
+   "1": {
+    "contagem": 323845,
+    "soma_valor": 75162355000.0
+   },
+   "2": {
+    "contagem": 12397,
+    "soma_valor": 2434365000.0
+   },
+   "3": {
+    "contagem": 87092,
+    "soma_valor": 12505460000.0
+   },
+   "4": {
+    "contagem": 74729,
+    "soma_valor": 18689295000.0
+   },
+   "5": {
+    "contagem": 28798,
+    "soma_valor": 5047700000.0
+   },
+   "6": {
+    "contagem": 69597,
+    "soma_valor": 15572065000.0
+   },
+   "7": {
+    "contagem": 228,
+    "soma_valor": 41930000.0
+   },
+   "8": {
+    "contagem": 274,
+    "soma_valor": 65880000.0
+   }
+  },
+  "ND": {
+   "1": {
+    "contagem": 18182,
+    "soma_valor": 4210770000.0
+   },
+   "2": {
+    "contagem": 326,
+    "soma_valor": 65130000.0
+   },
+   "3": {
+    "contagem": 2585,
+    "soma_valor": 385725000.0
+   },
+   "4": {
+    "contagem": 3105,
+    "soma_valor": 702705000.0
+   },
+   "5": {
+    "contagem": 550,
+    "soma_valor": 103050000.0
+   },
+   "6": {
+    "contagem": 3367,
+    "soma_valor": 787005000.0
+   },
+   "7": {
+    "contagem": 5,
+    "soma_valor": 895000.0
+   },
+   "8": {
+    "contagem": 5,
+    "soma_valor": 1145000.0
+   }
+  },
+  "NE": {
+   "1": {
+    "contagem": 53547,
+    "soma_valor": 10077815000.0
+   },
+   "2": {
+    "contagem": 1509,
+    "soma_valor": 275545000.0
+   },
+   "3": {
+    "contagem": 9184,
+    "soma_valor": 1075940000.0
+   },
+   "4": {
+    "contagem": 8774,
+    "soma_valor": 1560790000.0
+   },
+   "5": {
+    "contagem": 1790,
+    "soma_valor": 284140000.0
+   },
+   "6": {
+    "contagem": 14042,
+    "soma_valor": 2673200000.0
+   },
+   "7": {
+    "contagem": 25,
+    "soma_valor": 3245000.0
+   },
+   "8": {
+    "contagem": 38,
+    "soma_valor": 6760000.0
+   }
+  },
+  "NH": {
+   "1": {
+    "contagem": 45601,
+    "soma_valor": 11426485000.0
+   },
+   "2": {
+    "contagem": 1500,
+    "soma_valor": 329920000.0
+   },
+   "3": {
+    "contagem": 11976,
+    "soma_valor": 2023310000.0
+   },
+   "4": {
+    "contagem": 9500,
+    "soma_valor": 2397820000.0
+   },
+   "5": {
+    "contagem": 2934,
+    "soma_valor": 659300000.0
+   },
+   "6": {
+    "contagem": 8615,
+    "soma_valor": 2304315000.0
+   },
+   "7": {
+    "contagem": 29,
+    "soma_valor": 6375000.0
+   },
+   "8": {
+    "contagem": 59,
+    "soma_valor": 15645000.0
+   }
+  },
+  "NJ": {
+   "1": {
+    "contagem": 225834,
+    "soma_valor": 76204270000.0
+   },
+   "2": {
+    "contagem": 9104,
+    "soma_valor": 3128950000.0
+   },
+   "3": {
+    "contagem": 74017,
+    "soma_valor": 15165695000.0
+   },
+   "4": {
+    "contagem": 60870,
+    "soma_valor": 20711300000.0
+   },
+   "5": {
+    "contagem": 20024,
+    "soma_valor": 5653330000.0
+   },
+   "6": {
+    "contagem": 64353,
+    "soma_valor": 18916665000.0
+   },
+   "7": {
+    "contagem": 128,
+    "soma_valor": 40860000.0
+   },
+   "8": {
+    "contagem": 195,
+    "soma_valor": 75525000.0
+   }
+  },
+  "NM": {
+   "1": {
+    "contagem": 45431,
+    "soma_valor": 9577375000.0
+   },
+   "2": {
+    "contagem": 1809,
+    "soma_valor": 342655000.0
+   },
+   "3": {
+    "contagem": 14894,
+    "soma_valor": 2092290000.0
+   },
+   "4": {
+    "contagem": 12616,
+    "soma_valor": 2784360000.0
+   },
+   "5": {
+    "contagem": 4988,
+    "soma_valor": 856560000.0
+   },
+   "6": {
+    "contagem": 10202,
+    "soma_valor": 2175700000.0
+   },
+   "7": {
+    "contagem": 42,
+    "soma_valor": 8220000.0
+   },
+   "8": {
+    "contagem": 71,
+    "soma_valor": 14985000.0
+   }
+  },
+  "NV": {
+   "1": {
+    "contagem": 120031,
+    "soma_valor": 34870305000.0
+   },
+   "2": {
+    "contagem": 5355,
+    "soma_valor": 1469745000.0
+   },
+   "3": {
+    "contagem": 31311,
+    "soma_valor": 6276695000.0
+   },
+   "4": {
+    "contagem": 31839,
+    "soma_valor": 9970645000.0
+   },
+   "5": {
+    "contagem": 8717,
+    "soma_valor": 2207865000.0
+   },
+   "6": {
+    "contagem": 33147,
+    "soma_valor": 9099195000.0
+   },
+   "7": {
+    "contagem": 122,
+    "soma_valor": 31060000.0
+   },
+   "8": {
+    "contagem": 441,
+    "soma_valor": 123605000.0
+   }
+  },
+  "NY": {
+   "1": {
+    "contagem": 307788,
+    "soma_valor": 135073000000.0
+   },
+   "2": {
+    "contagem": 14680,
+    "soma_valor": 5167240000.0
+   },
+   "3": {
+    "contagem": 108769,
+    "soma_valor": 26857375000.0
+   },
+   "4": {
+    "contagem": 59962,
+    "soma_valor": 32221890000.0
+   },
+   "5": {
+    "contagem": 21972,
+    "soma_valor": 8430470000.0
+   },
+   "6": {
+    "contagem": 56642,
+    "soma_valor": 17072690000.0
+   },
+   "7": {
+    "contagem": 203,
+    "soma_valor": 68455000.0
+   },
+   "8": {
+    "contagem": 356,
+    "soma_valor": 256700000.0
+   }
+  },
+  "OH": {
+   "1": {
+    "contagem": 328655,
+    "soma_valor": 57477745000.0
+   },
+   "2": {
+    "contagem": 11383,
+    "soma_valor": 1762475000.0
+   },
+   "3": {
+    "contagem": 84912,
+    "soma_valor": 10098760000.0
+   },
+   "4": {
+    "contagem": 66285,
+    "soma_valor": 11671695000.0
+   },
+   "5": {
+    "contagem": 21819,
+    "soma_valor": 3146235000.0
+   },
+   "6": {
+    "contagem": 65664,
+    "soma_valor": 11218890000.0
+   },
+   "7": {
+    "contagem": 975,
+    "soma_valor": 113275000.0
+   },
+   "8": {
+    "contagem": 1030,
+    "soma_valor": 154250000.0
+   }
+  },
+  "OK": {
+   "1": {
+    "contagem": 84866,
+    "soma_valor": 15342480000.0
+   },
+   "2": {
+    "contagem": 4554,
+    "soma_valor": 1091060000.0
+   },
+   "3": {
+    "contagem": 24446,
+    "soma_valor": 2906320000.0
+   },
+   "4": {
+    "contagem": 17529,
+    "soma_valor": 3376185000.0
+   },
+   "5": {
+    "contagem": 5841,
+    "soma_valor": 838435000.0
+   },
+   "6": {
+    "contagem": 24770,
+    "soma_valor": 4221200000.0
+   },
+   "7": {
+    "contagem": 45,
+    "soma_valor": 6465000.0
+   },
+   "8": {
+    "contagem": 82,
+    "soma_valor": 13690000.0
+   }
+  },
+  "OR": {
+   "1": {
+    "contagem": 151646,
+    "soma_valor": 44670520000.0
+   },
+   "2": {
+    "contagem": 5858,
+    "soma_valor": 1477750000.0
+   },
+   "3": {
+    "contagem": 33010,
+    "soma_valor": 6521070000.0
+   },
+   "4": {
+    "contagem": 36581,
+    "soma_valor": 11850945000.0
+   },
+   "5": {
+    "contagem": 10041,
+    "soma_valor": 2504265000.0
+   },
+   "6": {
+    "contagem": 27827,
+    "soma_valor": 8299945000.0
+   },
+   "7": {
+    "contagem": 112,
+    "soma_valor": 33790000.0
+   },
+   "8": {
+    "contagem": 222,
+    "soma_valor": 74930000.0
+   }
+  },
+  "PA": {
+   "1": {
+    "contagem": 329335,
+    "soma_valor": 65521105000.0
+   },
+   "2": {
+    "contagem": 12546,
+    "soma_valor": 2189960000.0
+   },
+   "3": {
+    "contagem": 99002,
+    "soma_valor": 12821990000.0
+   },
+   "4": {
+    "contagem": 64138,
+    "soma_valor": 13683290000.0
+   },
+   "5": {
+    "contagem": 22785,
+    "soma_valor": 3975575000.0
+   },
+   "6": {
+    "contagem": 70576,
+    "soma_valor": 15348460000.0
+   },
+   "7": {
+    "contagem": 233,
+    "soma_valor": 37805000.0
+   },
+   "8": {
+    "contagem": 291,
+    "soma_valor": 64495000.0
+   }
+  },
+  "PR": {
+   "1": {
+    "contagem": 13955,
+    "soma_valor": 1958695000.0
+   },
+   "2": {
+    "contagem": 668,
+    "soma_valor": 85480000.0
+   },
+   "3": {
+    "contagem": 4394,
+    "soma_valor": 573130000.0
+   },
+   "4": {
+    "contagem": 2496,
+    "soma_valor": 404980000.0
+   },
+   "5": {
+    "contagem": 877,
+    "soma_valor": 105235000.0
+   },
+   "6": {
+    "contagem": 5252,
+    "soma_valor": 541870000.0
+   },
+   "7": {
+    "contagem": 1,
+    "soma_valor": 65000.0
+   },
+   "8": {
+    "contagem": 4,
+    "soma_valor": 490000.0
+   }
+  },
+  "RI": {
+   "1": {
+    "contagem": 35160,
+    "soma_valor": 8555590000.0
+   },
+   "2": {
+    "contagem": 925,
+    "soma_valor": 185205000.0
+   },
+   "3": {
+    "contagem": 10315,
+    "soma_valor": 1607025000.0
+   },
+   "4": {
+    "contagem": 7020,
+    "soma_valor": 1643960000.0
+   },
+   "5": {
+    "contagem": 2296,
+    "soma_valor": 536600000.0
+   },
+   "6": {
+    "contagem": 6532,
+    "soma_valor": 1700460000.0
+   },
+   "7": {
+    "contagem": 20,
+    "soma_valor": 4770000.0
+   },
+   "8": {
+    "contagem": 40,
+    "soma_valor": 11880000.0
+   }
+  },
+  "SC": {
+   "1": {
+    "contagem": 157491,
+    "soma_valor": 36164135000.0
+   },
+   "2": {
+    "contagem": 6496,
+    "soma_valor": 1167860000.0
+   },
+   "3": {
+    "contagem": 48878,
+    "soma_valor": 7008640000.0
+   },
+   "4": {
+    "contagem": 35715,
+    "soma_valor": 8499345000.0
+   },
+   "5": {
+    "contagem": 14474,
+    "soma_valor": 2376480000.0
+   },
+   "6": {
+    "contagem": 37884,
+    "soma_valor": 8363410000.0
+   },
+   "7": {
+    "contagem": 161,
+    "soma_valor": 22095000.0
+   },
+   "8": {
+    "contagem": 275,
+    "soma_valor": 57515000.0
+   }
+  },
+  "SD": {
+   "1": {
+    "contagem": 22574,
+    "soma_valor": 4623330000.0
+   },
+   "2": {
+    "contagem": 532,
+    "soma_valor": 113500000.0
+   },
+   "3": {
+    "contagem": 3825,
+    "soma_valor": 513505000.0
+   },
+   "4": {
+    "contagem": 4700,
+    "soma_valor": 969200000.0
+   },
+   "5": {
+    "contagem": 662,
+    "soma_valor": 110490000.0
+   },
+   "6": {
+    "contagem": 5882,
+    "soma_valor": 1323170000.0
+   },
+   "7": {
+    "contagem": 4,
+    "soma_valor": 950000.0
+   },
+   "8": {
+    "contagem": 5,
+    "soma_valor": 835000.0
+   }
+  },
+  "TN": {
+   "1": {
+    "contagem": 204735,
+    "soma_valor": 46868125000.0
+   },
+   "2": {
+    "contagem": 10376,
+    "soma_valor": 1936540000.0
+   },
+   "3": {
+    "contagem": 57384,
+    "soma_valor": 8289840000.0
+   },
+   "4": {
+    "contagem": 45600,
+    "soma_valor": 11105550000.0
+   },
+   "5": {
+    "contagem": 15128,
+    "soma_valor": 2670420000.0
+   },
+   "6": {
+    "contagem": 56170,
+    "soma_valor": 12538380000.0
+   },
+   "7": {
+    "contagem": 156,
+    "soma_valor": 31050000.0
+   },
+   "8": {
+    "contagem": 431,
+    "soma_valor": 91885000.0
+   }
+  },
+  "TX": {
+   "1": {
+    "contagem": 631905,
+    "soma_valor": 168542615000.0
+   },
+   "2": {
+    "contagem": 33376,
+    "soma_valor": 7616870000.0
+   },
+   "3": {
+    "contagem": 194411,
+    "soma_valor": 31744945000.0
+   },
+   "4": {
+    "contagem": 171455,
+    "soma_valor": 45502505000.0
+   },
+   "5": {
+    "contagem": 59290,
+    "soma_valor": 11216800000.0
+   },
+   "6": {
+    "contagem": 218777,
+    "soma_valor": 51932435000.0
+   },
+   "7": {
+    "contagem": 823,
+    "soma_valor": 158165000.0
+   },
+   "8": {
+    "contagem": 1108,
+    "soma_valor": 268890000.0
+   }
+  },
+  "UT": {
+   "1": {
+    "contagem": 162438,
+    "soma_valor": 43865880000.0
+   },
+   "2": {
+    "contagem": 6359,
+    "soma_valor": 1565955000.0
+   },
+   "3": {
+    "contagem": 29933,
+    "soma_valor": 6142025000.0
+   },
+   "4": {
+    "contagem": 34554,
+    "soma_valor": 9739440000.0
+   },
+   "5": {
+    "contagem": 10774,
+    "soma_valor": 3051110000.0
+   },
+   "6": {
+    "contagem": 37342,
+    "soma_valor": 10869570000.0
+   },
+   "7": {
+    "contagem": 49,
+    "soma_valor": 12275000.0
+   },
+   "8": {
+    "contagem": 138,
+    "soma_valor": 40580000.0
+   }
+  },
+  "VA": {
+   "1": {
+    "contagem": 268299,
+    "soma_valor": 83615185000.0
+   },
+   "2": {
+    "contagem": 9449,
+    "soma_valor": 2512305000.0
+   },
+   "3": {
+    "contagem": 65954,
+    "soma_valor": 12953020000.0
+   },
+   "4": {
+    "contagem": 64403,
+    "soma_valor": 22064805000.0
+   },
+   "5": {
+    "contagem": 20874,
+    "soma_valor": 5333200000.0
+   },
+   "6": {
+    "contagem": 77529,
+    "soma_valor": 25155625000.0
+   },
+   "7": {
+    "contagem": 113,
+    "soma_valor": 33365000.0
+   },
+   "8": {
+    "contagem": 137,
+    "soma_valor": 48135000.0
+   }
+  },
+  "VI": {
+   "1": {
+    "contagem": 0,
+    "soma_valor": 0.0
+   },
+   "2": {
+    "contagem": 0,
+    "soma_valor": 0.0
+   },
+   "3": {
+    "contagem": 2,
+    "soma_valor": 320000.0
+   },
+   "4": {
+    "contagem": 1,
+    "soma_valor": 185000.0
+   },
+   "5": {
+    "contagem": 0,
+    "soma_valor": 0.0
+   },
+   "6": {
+    "contagem": 1,
+    "soma_valor": 35000.0
+   },
+   "7": {
+    "contagem": 0,
+    "soma_valor": 0.0
+   },
+   "8": {
+    "contagem": 0,
+    "soma_valor": 0.0
+   }
+  },
+  "VT": {
+   "1": {
+    "contagem": 15951,
+    "soma_valor": 3242365000.0
+   },
+   "2": {
+    "contagem": 625,
+    "soma_valor": 105075000.0
+   },
+   "3": {
+    "contagem": 3572,
+    "soma_valor": 546520000.0
+   },
+   "4": {
+    "contagem": 3232,
+    "soma_valor": 628180000.0
+   },
+   "5": {
+    "contagem": 839,
+    "soma_valor": 155575000.0
+   },
+   "6": {
+    "contagem": 1926,
+    "soma_valor": 417720000.0
+   },
+   "7": {
+    "contagem": 17,
+    "soma_valor": 2335000.0
+   },
+   "8": {
+    "contagem": 9,
+    "soma_valor": 2435000.0
+   }
+  },
+  "WA": {
+   "1": {
+    "contagem": 308782,
+    "soma_valor": 109064700000.0
+   },
+   "2": {
+    "contagem": 10354,
+    "soma_valor": 2980040000.0
+   },
+   "3": {
+    "contagem": 62845,
+    "soma_valor": 14959125000.0
+   },
+   "4": {
+    "contagem": 73097,
+    "soma_valor": 25897935000.0
+   },
+   "5": {
+    "contagem": 19467,
+    "soma_valor": 5942025000.0
+   },
+   "6": {
+    "contagem": 58674,
+    "soma_valor": 21762770000.0
+   },
+   "7": {
+    "contagem": 461,
+    "soma_valor": 141265000.0
+   },
+   "8": {
+    "contagem": 879,
+    "soma_valor": 339595000.0
+   }
+  },
+  "WI": {
+   "1": {
+    "contagem": 200474,
+    "soma_valor": 37195540000.0
+   },
+   "2": {
+    "contagem": 9326,
+    "soma_valor": 1624060000.0
+   },
+   "3": {
+    "contagem": 36283,
+    "soma_valor": 4560955000.0
+   },
+   "4": {
+    "contagem": 28924,
+    "soma_valor": 5548730000.0
+   },
+   "5": {
+    "contagem": 7788,
+    "soma_valor": 1360880000.0
+   },
+   "6": {
+    "contagem": 27136,
+    "soma_valor": 5372930000.0
+   },
+   "7": {
+    "contagem": 326,
+    "soma_valor": 47030000.0
+   },
+   "8": {
+    "contagem": 407,
+    "soma_valor": 77115000.0
+   }
+  },
+  "WV": {
+   "1": {
+    "contagem": 32927,
+    "soma_valor": 5195805000.0
+   },
+   "2": {
+    "contagem": 1771,
+    "soma_valor": 240445000.0
+   },
+   "3": {
+    "contagem": 11145,
+    "soma_valor": 1146135000.0
+   },
+   "4": {
+    "contagem": 5760,
+    "soma_valor": 1226780000.0
+   },
+   "5": {
+    "contagem": 3051,
+    "soma_valor": 361735000.0
+   },
+   "6": {
+    "contagem": 6062,
+    "soma_valor": 2560420000.0
+   },
+   "7": {
+    "contagem": 140,
+    "soma_valor": 17450000.0
+   },
+   "8": {
+    "contagem": 136,
+    "soma_valor": 26120000.0
+   }
+  },
+  "WY": {
+   "1": {
+    "contagem": 16121,
+    "soma_valor": 3966285000.0
+   },
+   "2": {
+    "contagem": 454,
+    "soma_valor": 105190000.0
+   },
+   "3": {
+    "contagem": 3263,
+    "soma_valor": 589745000.0
+   },
+   "4": {
+    "contagem": 3293,
+    "soma_valor": 831175000.0
+   },
+   "5": {
+    "contagem": 906,
+    "soma_valor": 191750000.0
+   },
+   "6": {
+    "contagem": 5081,
+    "soma_valor": 1287945000.0
+   },
+   "7": {
+    "contagem": 6,
+    "soma_valor": 1530000.0
+   },
+   "8": {
+    "contagem": 13,
+    "soma_valor": 3315000.0
+   }
+  }
+ }
+}
