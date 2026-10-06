@@ -74,3 +74,19 @@ O Diego aprovou todas as propostas (D8, D10–D12, D15–D18) em 06/10/2026 e au
 - **três versões de 2021 e de 2022** (Snapshot → One Year → Three Year), para as revisões.
 
 Desenho que economiza disco: a **bronze guarda todas as versões** (é onde se comparam as revisões, sobre o texto original). A **silver é só a vigente**, tipada, e recebe as versões em ordem, então as versões antigas tipadas continuam acessíveis por time travel. Não há uma silver por versão: duplicaria ~85 mi linhas sem ganho.
+
+## Decisões das fases 1 a 3 (06/10/2026)
+
+**D27. Cabeçalho fixo: 99 colunas, nome e ordem; diferente = carga recusada.** Medido: o cabeçalho é idêntico em 2018, 2019, 2020 e 2021 (Snapshot e Three Year); só o nome do CSV dentro do zip muda (o de 2018 tem até `__` duplicado). Se um ano vier diferente, a bronze para com a lista do que sobra e do que falta, em vez de adivinhar o mapeamento.
+
+**D28. A silver recebe as versões na ordem em que o FFIEC as congelou.** As datas de congelamento estão no código do site oficial (`freezeDate`). Carregando nessa ordem, cada commit da silver é um retrato do que existia naquela data, e o time travel responde "o que um analista via em maio de 2023". Limite assumido: o retrato só tem o que está no escopo (ex.: não há o Snapshot de 2019).
+
+**D29. Dois níveis de problema na silver: rejeição × alerta.**
+- **Rejeição** é o que fere o formato oficial: linha malformada, número ilegível, código fora do domínio, ano diferente do arquivo. Vai para `silver/rejeitados` com o motivo e o texto original.
+- **Alerta** é incoerência de negócio, por exemplo motivo de negativa em empréstimo originado. A linha **fica**, porque o número oficial do governo a conta. Rejeitar por incoerência quebraria a conferência oficial e esconderia o problema em vez de medi-lo.
+
+As 9 CHECK constraints do Delta espelham as regras de rejeição, e um teste prova que barram escrita direta na tabela.
+
+**D30. "Qual campo foi corrigido" com hash por coluna combinado por XOR.** A primeira versão calculava, para cada coluna, o hash das outras 98. O resultado eram ~10 mil nós de expressão, e o Java estourou a memória (**OutOfMemoryError com 1 GB, em teste de 3 linhas**). Agora há um hash por coluna (com a posição) e o total por XOR. "A linha sem a coluna X" = total XOR hash(X), porque XOR é a própria inversa: mesmo resultado, ~100 vezes menos expressão.
+
+**D31. O hash da linha não fica guardado na bronze; é calculado na hora das revisões.** Guardar 8–16 bytes de hash aleatório (que não comprime) em ~225 mi linhas somaria 2–4 GB à bronze, para servir só aos 2 anos com várias versões. Calcular na hora custa segundos por versão. A chave é de 96 bits (xxhash64 + murmur3), com uma marca de nulo para `("a", nulo)` não colidir com `(nulo, "a")`. A exatidão é provada contra o `exceptAll` do Spark (diferença exata, sem hash) num estado inteiro, em toda execução.

@@ -11,6 +11,10 @@ CARGAS = "controle/cargas"
 SILVER = "silver/vigente"
 REJEITADOS = "silver/rejeitados"
 SILVER_VERSOES = "controle/silver_versoes"
+REV_DIFERENCAS = "revisoes/diferencas"
+REV_INSTITUICOES = "revisoes/instituicoes"
+REV_CAMPOS = "revisoes/campos"
+DQ = "dq/checagens"
 
 
 def caminho(raiz: Path, nome: str) -> str:
