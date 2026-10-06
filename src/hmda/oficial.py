@@ -27,10 +27,13 @@ from hmda.baixar import contexto_ssl
 API = "https://ffiec.cfpb.gov/v2/data-browser-api/view/aggregations"
 PASTA = Path(__file__).resolve().parents[2] / "docs" / "oficial"
 
-# 50 estados + DC + territórios que aparecem no HMDA.
+# 50 estados + DC + territórios que aparecem no HMDA. FM, MH e PW (Estados Associados:
+# Micronésia, Ilhas Marshall, Palau) faltavam na 1ª versão: o dq achou 1-2 linhas
+# deles em 2018, 2020 e 2023 que a consulta não cobria (D38).
 ESTADOS = tuple(
     "AL AK AZ AR CA CO CT DE DC FL GA HI ID IL IN IA KS KY LA ME MD MA MI MN MS MO MT NE "  # noqa: SIM905
-    "NV NH NJ NM NY NC ND OH OK OR PA RI SC SD TN TX UT VT VA WA WV WI WY PR GU VI AS MP".split()
+    "NV NH NJ NM NY NC ND OH OK OR PA RI SC SD TN TX UT VT VA WA WV WI WY PR GU VI AS MP "
+    "FM MH PW".split()
 )
 RESULTADOS = "1,2,3,4,5,6,7,8"
 

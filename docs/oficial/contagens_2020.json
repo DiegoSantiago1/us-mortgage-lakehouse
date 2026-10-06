@@ -1,6 +1,6 @@
 {
  "ano": 2020,
- "consultado_em": "2026-10-06T10:33:07+00:00",
+ "consultado_em": "2026-10-06T16:46:36+00:00",
  "fonte": "https://ffiec.cfpb.gov/v2/data-browser-api/view/aggregations",
  "observacao": "vers\u00e3o mais recente do ano; s\u00f3 pedidos com estado",
  "por_estado": {
@@ -376,6 +376,40 @@
    "8": {
     "contagem": 1578,
     "soma_valor": 343940000.0
+   }
+  },
+  "FM": {
+   "1": {
+    "contagem": 2,
+    "soma_valor": 570000.0
+   },
+   "2": {
+    "contagem": 0,
+    "soma_valor": 0.0
+   },
+   "3": {
+    "contagem": 0,
+    "soma_valor": 0.0
+   },
+   "4": {
+    "contagem": 0,
+    "soma_valor": 0.0
+   },
+   "5": {
+    "contagem": 0,
+    "soma_valor": 0.0
+   },
+   "6": {
+    "contagem": 0,
+    "soma_valor": 0.0
+   },
+   "7": {
+    "contagem": 0,
+    "soma_valor": 0.0
+   },
+   "8": {
+    "contagem": 0,
+    "soma_valor": 0.0
    }
   },
   "GA": {
@@ -818,6 +852,40 @@
    "8": {
     "contagem": 118,
     "soma_valor": 28530000.0
+   }
+  },
+  "MH": {
+   "1": {
+    "contagem": 0,
+    "soma_valor": 0.0
+   },
+   "2": {
+    "contagem": 0,
+    "soma_valor": 0.0
+   },
+   "3": {
+    "contagem": 0,
+    "soma_valor": 0.0
+   },
+   "4": {
+    "contagem": 0,
+    "soma_valor": 0.0
+   },
+   "5": {
+    "contagem": 0,
+    "soma_valor": 0.0
+   },
+   "6": {
+    "contagem": 0,
+    "soma_valor": 0.0
+   },
+   "7": {
+    "contagem": 0,
+    "soma_valor": 0.0
+   },
+   "8": {
+    "contagem": 0,
+    "soma_valor": 0.0
    }
   },
   "MI": {
@@ -1464,6 +1532,40 @@
    "8": {
     "contagem": 4,
     "soma_valor": 390000.0
+   }
+  },
+  "PW": {
+   "1": {
+    "contagem": 0,
+    "soma_valor": 0.0
+   },
+   "2": {
+    "contagem": 0,
+    "soma_valor": 0.0
+   },
+   "3": {
+    "contagem": 0,
+    "soma_valor": 0.0
+   },
+   "4": {
+    "contagem": 0,
+    "soma_valor": 0.0
+   },
+   "5": {
+    "contagem": 0,
+    "soma_valor": 0.0
+   },
+   "6": {
+    "contagem": 0,
+    "soma_valor": 0.0
+   },
+   "7": {
+    "contagem": 0,
+    "soma_valor": 0.0
+   },
+   "8": {
+    "contagem": 0,
+    "soma_valor": 0.0
    }
   },
   "RI": {
