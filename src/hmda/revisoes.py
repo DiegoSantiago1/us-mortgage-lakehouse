@@ -15,9 +15,18 @@ coluna por vez: se ficam iguais sem a coluna X, a diferença era só em X.
 
 A exatidão do hash é conferida contra o `exceptAll` do Spark (diferença exata de
 multiconjuntos, linha inteira, sem hash) num estado inteiro (`conferir_com_except_all`).
+
+O que entra na comparação (D39, medido em 2021 One Year -> Three Year):
+- só os campos **informados pelo banco**. Os calculados pelo FFIEC (dados do censo
+  `tract_*`, `ffiec_*` e os `derived_*`) foram recalculados no Three Year para
+  quase todas as linhas; isso não é revisão do banco;
+- os valores numéricos **normalizados**: o Snapshot e o One Year gravam ponto
+  flutuante ("2560.0", "2.6499999999999999"), o Three Year guarda o texto do
+  banco ("2560.00", "00120"). Sem normalizar, 99,7% das linhas "mudavam".
 """
 
 import argparse
+import shutil
 import sys
 from pathlib import Path
 
@@ -35,6 +44,34 @@ NULO = "\u0000"  # marca de nulo: ("a", nulo) e (nulo, "a") não podem dar o mes
 SEPARADOR = "\u001f"
 
 
+# Campos calculados pelo FFIEC (censo, região metropolitana, derivados): fora da comparação.
+CALCULADOS_FFIEC = tuple(c for c in COLUNAS_LAR if c.startswith(("tract_", "ffiec_", "derived_")))
+COMPARADAS = tuple(c for c in COLUNAS_LAR if c not in CALCULADOS_FFIEC)
+# Valores numéricos cujo formato varia entre versões (normalizados antes do hash).
+NUMERICOS = (
+    "loan_amount", "combined_loan_to_value_ratio", "interest_rate", "rate_spread",
+    "total_loan_costs", "total_points_and_fees", "origination_charges", "discount_points",
+    "lender_credits", "loan_term", "prepayment_penalty_term", "intro_rate_period",
+    "property_value", "multifamily_affordable_units", "income",
+)  # fmt: skip
+BALDES = 8  # o "qual campo mudou" roda em 8 blocos por banco: pico de disco menor
+
+
+def numero_canonico(c: str) -> Column:
+    """ "2560.0", "2560.00", "02560" -> "2560"; "2.6499999999999999" -> "2.65".
+
+    Arredonda a 6 casas (os valores do HMDA têm no máximo 3), tira zeros à direita
+    e o ponto final. Texto que não é número ("NA", "Exempt") fica como está.
+    """
+    d = F.col(c).try_cast("decimal(38,6)").cast("string")
+    sem_zeros = F.regexp_replace(F.regexp_replace(d, "0+$", ""), "\\.$", "")
+    return F.when(d.isNotNull(), sem_zeros).otherwise(F.col(c)).alias(c)
+
+
+def normalizar(df: DataFrame) -> DataFrame:
+    return df.select(*[numero_canonico(c) if c in NUMERICOS else F.col(c) for c in COMPARADAS])
+
+
 def texto_da_linha(colunas: list[str]) -> Column:
     return F.concat_ws(SEPARADOR, *[F.coalesce(F.col(c), F.lit(NULO)) for c in colunas])
 
@@ -46,7 +83,8 @@ def chave(colunas: list[str]) -> list[Column]:
 
 
 def versao_bronze(spark: SparkSession, raiz: Path, ano: int, versao: str) -> DataFrame:
-    return (
+    """A versão já normalizada (só campos do banco, números canônicos)."""
+    return normalizar(
         spark.read.format("delta")
         .load(tabelas.caminho(raiz, tabelas.BRONZE))
         .where((F.col("_ano") == ano) & (F.col("_versao") == versao))
@@ -55,7 +93,7 @@ def versao_bronze(spark: SparkSession, raiz: Path, ano: int, versao: str) -> Dat
 
 def contagens(df: DataFrame) -> DataFrame:
     return (
-        df.select(*chave(list(COLUNAS_LAR)), "lei", "state_code", "action_taken", "loan_purpose")
+        df.select(*chave(list(COMPARADAS)), "lei", "state_code", "action_taken", "loan_purpose")
         .groupBy("h1", "h2")
         .agg(
             F.count("*").alias("n"),
@@ -91,7 +129,7 @@ def diferencas(antes: DataFrame, depois: DataFrame) -> DataFrame:
 def linhas_que_mudaram(df: DataFrame, dif: DataFrame, lado: str) -> DataFrame:
     """As linhas de `df` que saíram (lado='saiu') ou entraram ('entrou'), com multiplicidade."""
     alvo = dif.where(F.col(lado) > 0).select("h1", "h2", F.col(lado).alias("vezes"))
-    com_chave = df.select(*COLUNAS_LAR, *chave(list(COLUNAS_LAR)))
+    com_chave = df.select(*COMPARADAS, *chave(list(COMPARADAS)))
     juntas = com_chave.join(alvo, ["h1", "h2"])
     janela = Window.partitionBy("h1", "h2").orderBy(F.lit(1))
     return (
@@ -120,7 +158,7 @@ def campos_corrigidos(saiu: DataFrame, entrou: DataFrame) -> DataFrame:
                     F.lit(c).alias("campo"),
                     F.xxhash64(F.lit(i), F.coalesce(F.col(c), F.lit(NULO))).alias("hc"),
                 )
-                for i, c in enumerate(COLUNAS_LAR)
+                for i, c in enumerate(COMPARADAS)
             ]
         )
         return (
@@ -153,8 +191,8 @@ def campos_corrigidos(saiu: DataFrame, entrou: DataFrame) -> DataFrame:
 
 def conferir_com_except_all(antes: DataFrame, depois: DataFrame, estado: str) -> dict[str, int]:
     """Diferença exata (sem hash) num estado, para provar que o hash não erra."""
-    a = antes.where(F.col("state_code") == estado).select(*COLUNAS_LAR)
-    d = depois.where(F.col("state_code") == estado).select(*COLUNAS_LAR)
+    a = antes.where(F.col("state_code") == estado).select(*COMPARADAS)
+    d = depois.where(F.col("state_code") == estado).select(*COMPARADAS)
     exato_saiu = a.exceptAll(d).count()
     exato_entrou = d.exceptAll(a).count()
     pelo_hash = (
@@ -245,14 +283,38 @@ def comparar(
     )
 
     if com_campos:
-        saiu = linhas_que_mudaram(antes, mudou, "saiu")
-        entrou = linhas_que_mudaram(depois, mudou, "entrou")
-        _gravar(
-            campos_corrigidos(saiu, entrou).select(*marca, "*"),
-            tabelas.caminho(raiz, tabelas.REV_CAMPOS),
-            filtro,
-            ["ano"],
+        # As linhas que mudaram são gravadas uma vez; o "qual campo" roda em blocos
+        # de bancos, para o shuffle (85 hashes por linha) caber no disco (D39).
+        temporaria = tabelas.caminho(raiz, "revisoes/_linhas_mudaram")
+        balde = F.pmod(F.hash("lei"), F.lit(BALDES)).alias("_balde")
+        (
+            linhas_que_mudaram(antes, mudou, "saiu")
+            .select("*", F.lit("saiu").alias("_lado"), balde)
+            .unionByName(
+                linhas_que_mudaram(depois, mudou, "entrou").select(
+                    "*", F.lit("entrou").alias("_lado"), balde
+                )
+            )
+            .write.format("delta")
+            .mode("overwrite")
+            .partitionBy("_balde")
+            .save(temporaria)
         )
+        mudaram = spark.read.format("delta").load(temporaria)
+        pares: dict[str, int] = {}
+        for b in range(BALDES):
+            parte = mudaram.where(F.col("_balde") == b)
+            for r in campos_corrigidos(
+                parte.where(F.col("_lado") == "saiu"), parte.where(F.col("_lado") == "entrou")
+            ).collect():
+                pares[r["campo"]] = pares.get(r["campo"], 0) + int(r["pares"])
+        campos = spark.createDataFrame(
+            [(c, n) for c, n in pares.items()] or [("", 0)], "campo string, pares long"
+        ).where(F.col("pares") > 0)
+        _gravar(
+            campos.select(*marca, "*"), tabelas.caminho(raiz, tabelas.REV_CAMPOS), filtro, ["ano"]
+        )
+        shutil.rmtree(temporaria.removeprefix("file:"), ignore_errors=True)
 
     resumo["conferencia"] = conferir_com_except_all(antes, depois, estado_conferencia)
     resumo.update(ano=ano, de_versao=de, para_versao=para)

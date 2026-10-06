@@ -99,3 +99,52 @@ def test_versao_inventada_e_recusada(spark, lake):
     raiz, _ = lake
     with pytest.raises(ValueError, match="desconhecida"):
         revisoes.comparar(spark, raiz, 2021, "snapshot", "x' OR 1=1 --")
+
+
+def test_formato_diferente_do_mesmo_numero_nao_e_revisao(spark, tmp_path, lake):
+    """Achado real (2021): o One Year grava 2560.0, o Three Year grava 2560.00 ou 02560."""
+    raiz, _ = lake
+    carregar(
+        spark,
+        tmp_path,
+        lake,
+        "snapshot",
+        [
+            linha(
+                lei="F",
+                discount_points="2560.0",
+                interest_rate="2.6499999999999999",
+                loan_term="120",
+            )
+        ],
+    )
+    carregar(
+        spark,
+        tmp_path,
+        lake,
+        "one_year",
+        [linha(lei="F", discount_points="2560.00", interest_rate="2.650", loan_term="00120")],
+    )
+    r = revisoes.comparar(spark, raiz, 2021, "snapshot", "one_year")
+    assert (r["sairam"], r["entraram"], r["iguais"]) == (0, 0, 1)
+
+
+def test_campo_calculado_pelo_ffiec_nao_e_revisao_do_banco(spark, tmp_path, lake):
+    """Achado real: o FFIEC recalculou os dados do censo (tract_*) no Three Year."""
+    raiz, _ = lake
+    carregar(
+        spark, tmp_path, lake, "snapshot", [linha(lei="C", tract_to_msa_income_percentage="111.0")]
+    )
+    carregar(
+        spark, tmp_path, lake, "one_year", [linha(lei="C", tract_to_msa_income_percentage="92.09")]
+    )
+    r = revisoes.comparar(spark, raiz, 2021, "snapshot", "one_year")
+    assert (r["sairam"], r["entraram"]) == (0, 0)
+
+
+def test_mudanca_de_valor_de_verdade_continua_aparecendo(spark, tmp_path, lake):
+    raiz, _ = lake
+    carregar(spark, tmp_path, lake, "snapshot", [linha(lei="V", interest_rate="2.65")])
+    carregar(spark, tmp_path, lake, "one_year", [linha(lei="V", interest_rate="2.75")])
+    r = revisoes.comparar(spark, raiz, 2021, "snapshot", "one_year")
+    assert (r["sairam"], r["entraram"]) == (1, 1)
