@@ -1,0 +1,39 @@
+{
+  "zip": "2021_public_lar_three_year_csv_49d4dee37015.zip",
+  "zip_bytes": 1494610126,
+  "medido_em": "2026-10-06T02:35:18.686272+00:00",
+  "membros": [
+    {
+      "nome": "2021_public_lar_three_year_csv.csv",
+      "bytes": 9958236319
+    },
+    {
+      "nome": "__MACOSX/._2021_public_lar_three_year_csv.csv",
+      "bytes": 233
+    }
+  ],
+  "extrair_no_volume_s": 291.5,
+  "fim_de_linha_crlf": false,
+  "cabecalho": "activity_year,lei,derived_msa_md,state_code,county_code,census_tract,conforming_loan_limit,derived_loan_product_type,derived_dwelling_category,derived_ethnicity,derived_race,derived_sex,action_taken,purchaser_type,preapproval,loan_type,loan_purpose,lien_status,reverse_mortgage,open_end_line_of_credit,business_or_commercial_purpose,loan_amount,combined_loan_to_value_ratio,interest_rate,rate_spread,hoepa_status,total_loan_costs,total_points_and_fees,origination_charges,discount_points,lender_credits,loan_term,prepayment_penalty_term,intro_rate_period,negative_amortization,interest_only_payment,balloon_payment,other_nonamortizing_features,property_value,construction_method,occupancy_type,manufactured_home_secured_property_type,manufactured_home_land_property_interest,total_units,multifamily_affordable_units,income,debt_to_income_ratio,applicant_credit_score_type,co_applicant_credit_score_type,applicant_ethnicity_1,applicant_ethnicity_2,applicant_ethnicity_3,applicant_ethnicity_4,applicant_ethnicity_5,co_applicant_ethnicity_1,co_applicant_ethnicity_2,co_applicant_ethnicity_3,co_applicant_ethnicity_4,co_applicant_ethnicity_5,applicant_ethnicity_observed,co_applicant_ethnicity_observed,applicant_race_1,applicant_race_2,applicant_race_3,applicant_race_4,applicant_race_5,co_applicant_race_1,co_applicant_race_2,co_applicant_race_3,co_applicant_race_4,co_applicant_race_5,applicant_race_observed,co_applicant_race_observed,applicant_sex,co_applicant_sex,applicant_sex_observed,co_applicant_sex_observed,applicant_age,co_applicant_age,applicant_age_above_62,co_applicant_age_above_62,submission_of_application,initially_payable_to_institution,aus_1,aus_2,aus_3,aus_4,aus_5,denial_reason_1,denial_reason_2,denial_reason_3,denial_reason_4,tract_population,tract_minority_population_percent,ffiec_msa_md_median_family_income,tract_to_msa_income_percentage,tract_owner_occupied_units,tract_one_to_four_family_homes,tract_median_age_of_housing_units",
+  "amostra": [
+    "2021,5493005JPZ3LXXMB0S24,37860,FL,12033,12033001001,C,Conventional:First Lien,Single Family (1-4 Units):Site-Built,Ethnicity Not Available,White,Female,1,0,2,1,1,1,2,2,2,275000,80,3.25,0.323,2,3775.25,NA,1145.00,,,360,NA,NA,2,2,2,2,335000,1,1,3,5,1,NA,133,43,1,10,3,,,,,5,,,,,2,4,5,,,,,8,,,,,2,4,2,5,2,4,65-74,9999,Yes,NA,1,1,2,,,,,10,,,,6200,15.63,73900,156.6,1760,2323,40",
+    "2021,5493005JPZ3LXXMB0S24,37460,FL,12005,12005000803,C,VA:First Lien,Single Family (1-4 Units):Site-Built,Not Hispanic or Latino,White,Male,1,2,2,3,1,1,2,2,2,235000,100,3.125,0.372,2,6969.85,NA,1153.68,1153.68,2311.98,360,NA,NA,2,2,2,2,225000,1,1,3,5,1,NA,54,30%-<36%,2,10,2,,,,,5,,,,,2,4,5,,,,,8,,,,,2,4,1,5,2,4,<25,9999,No,NA,1,1,1,,,,,10,,,,5183,32.88,67200,81.69,898,2329,34",
+    "2021,5493005JPZ3LXXMB0S24,26620,AL,01089,01089010623,C,VA:First Lien,Single Family (1-4 Units):Site-Built,Not Hispanic or Latino,Black or African American,Joint,1,2,2,3,1,1,2,2,2,275000,100,3.5,0.673,2,4245.27,NA,1821.27,676.27,1345.00,360,NA,NA,2,2,2,2,275000,1,1,3,5,1,NA,57,41,2,9,2,,,,,2,,,,,2,2,3,,,,,3,,,,,2,2,1,2,2,2,35-44,35-44,No,No,1,1,1,,,,,10,,,,6459,30.08,82900,160.93,2085,2443,14"
+  ],
+  "colunas": 99,
+  "tem_aspas": false,
+  "linhas": 26269980,
+  "contar_csv_s": 34.4,
+  "escrever_delta_bind_windows_s": 393.4,
+  "delta_bind_windows_bytes": 1214909804,
+  "delta_bind_windows_arquivos": 75,
+  "ler_delta_bind_windows_s": 6.1,
+  "agregar_delta_bind_windows_s": 6.4,
+  "escrever_delta_volume_docker_s": 288.4,
+  "delta_volume_docker_bytes": 1214909804,
+  "delta_volume_docker_arquivos": 75,
+  "ler_delta_volume_docker_s": 2.6,
+  "agregar_delta_volume_docker_s": 3.0,
+  "csv_bytes": 9958236319,
+  "pico_memoria_container_bytes": 8517402624
+}

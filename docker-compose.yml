@@ -1,0 +1,28 @@
+services:
+  spark:
+    build: .
+    image: us-mortgage-lakehouse:local
+    working_dir: /app
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      HMDA_DADOS: /dados
+      HMDA_LAKE: /lake
+    volumes:
+      # Código: editar no VS Code e rodar no container sem rebuild.
+      - ./src:/app/src
+      - ./tests:/app/tests
+      - ./scripts:/app/scripts
+      - ./docs:/app/docs
+      - ./docker:/app/docker
+      - ./pyproject.toml:/app/pyproject.toml
+      # Dados no PC, fora do OneDrive (D6).
+      - ${HMDA_DADOS_HOST:-C:/dados/hmda}:/dados
+      # Volume Docker (disco do WSL): tabelas Delta, 2x mais rápido que a pasta do Windows (D25).
+      - lake:/lake
+    # Spark local usa memória compartilhada para o shuffle.
+    shm_size: 2g
+
+volumes:
+  lake:

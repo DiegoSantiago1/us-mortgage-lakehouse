@@ -1,0 +1,20 @@
+[project]
+name = "us-mortgage-lakehouse"
+version = "0.1.0"
+description = "Lakehouse do HMDA (financiamento imobiliário dos EUA) em PySpark + Delta Lake"
+requires-python = ">=3.13"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+addopts = "-ra"
+
+[tool.ruff]
+line-length = 100
+target-version = "py313"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "SIM", "RUF"]
+# Texto em português usa "×" e "–" de propósito.
+ignore = ["RUF001", "RUF002", "RUF003"]

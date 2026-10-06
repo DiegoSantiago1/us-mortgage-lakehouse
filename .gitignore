@@ -1,0 +1,29 @@
+# Contexto pessoal (nunca publicar)
+CLAUDE.md
+docs/APRENDIZADO.md
+
+# Segredos e configuração local
+.env
+
+# Dados (ficam em C:\dados\hmda, fora do repositório)
+dados/
+*.zip
+*.csv
+!tests/dados/*.csv
+spark-warehouse/
+metastore_db/
+derby.log
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# Editor / sistema
+.vscode/
+.idea/
+Thumbs.db
+.DS_Store

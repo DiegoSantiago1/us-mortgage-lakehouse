@@ -1,0 +1,8 @@
+# Versões fixas (D15): conferidas no PyPI em 06/10/2026.
+# delta-spark 4.4.1 aceita pyspark >=4.0.1,<=4.2.0.
+pyspark==4.2.0
+delta-spark==4.4.1
+
+# Desenvolvimento
+pytest==9.1.1
+ruff==0.16.10
