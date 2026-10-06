@@ -179,70 +179,88 @@ def _gravar(df: DataFrame, caminho: str, filtro: str, particoes: list[str]) -> N
 
 
 def comparar(
-    spark: SparkSession, raiz: Path, ano: int, de: str, para: str, estado_conferencia: str = "DE"
+    spark: SparkSession,
+    raiz: Path,
+    ano: int,
+    de: str,
+    para: str,
+    estado_conferencia: str = "DE",
+    com_campos: bool = True,
 ) -> dict:
+    """Compara duas versões de um ano e grava diferenças, instituições e (opcional) campos.
+
+    Sem persist() (D39): na primeira execução real, guardar em cache o resultado
+    intermediário de ~52 mi de linhas pressionou memória e disco até o Docker
+    parar de responder. Agora só as linhas que mudaram são gravadas; o resto é
+    derivado delas e de contagens simples, sem hash.
+    """
     if de not in VERSOES or para not in VERSOES:  # entra no filtro do replaceWhere
         raise ValueError(f"versão desconhecida: {de!r} ou {para!r}")
     antes = versao_bronze(spark, raiz, ano, de)
     depois = versao_bronze(spark, raiz, ano, para)
-    dif = diferencas(antes, depois).persist()
-    try:
-        marca = [
-            F.lit(ano).alias("ano"),
-            F.lit(de).alias("de_versao"),
-            F.lit(para).alias("para_versao"),
-        ]
-        filtro = f"ano = {int(ano)} AND de_versao = '{de}' AND para_versao = '{para}'"
+    marca = [
+        F.lit(ano).alias("ano"),
+        F.lit(de).alias("de_versao"),
+        F.lit(para).alias("para_versao"),
+    ]
+    filtro = f"ano = {int(ano)} AND de_versao = '{de}' AND para_versao = '{para}'"
 
-        mudou = dif.where((F.col("entrou") > 0) | (F.col("saiu") > 0))
-        _gravar(
-            mudou.select(*marca, "*"),
-            tabelas.caminho(raiz, tabelas.REV_DIFERENCAS),
-            filtro,
-            ["ano", "de_versao", "para_versao"],
-        )
-        por_inst = dif.groupBy("lei").agg(
-            F.sum("n_antes").alias("antes"),
-            F.sum("n_depois").alias("depois"),
-            F.sum("entrou").alias("entraram"),
-            F.sum("saiu").alias("sairam"),
-        )
-        _gravar(
-            por_inst.select(*marca, "*"),
-            tabelas.caminho(raiz, tabelas.REV_INSTITUICOES),
-            filtro,
-            ["ano"],
-        )
-        resumo = (
-            dif.agg(
-                F.sum("n_antes").alias("antes"),
-                F.sum("n_depois").alias("depois"),
-                F.sum("iguais").alias("iguais"),
-                F.sum("entrou").alias("entraram"),
-                F.sum("saiu").alias("sairam"),
-            )
-            .collect()[0]
-            .asDict()
-        )
+    dif = diferencas(antes, depois)
+    _gravar(
+        dif.where((F.col("entrou") > 0) | (F.col("saiu") > 0)).select(*marca, "*"),
+        tabelas.caminho(raiz, tabelas.REV_DIFERENCAS),
+        filtro,
+        ["ano", "de_versao", "para_versao"],
+    )
+    mudou = (
+        spark.read.format("delta").load(tabelas.caminho(raiz, tabelas.REV_DIFERENCAS)).where(filtro)
+    )
 
-        saiu = linhas_que_mudaram(antes, dif, "saiu")
-        entrou = linhas_que_mudaram(depois, dif, "entrou")
-        campos = campos_corrigidos(saiu, entrou)
+    n_antes, n_depois = antes.count(), depois.count()
+    mov = mudou.agg(F.sum("entrou").alias("entraram"), F.sum("saiu").alias("sairam")).collect()[0]
+    entraram, sairam = int(mov["entraram"] or 0), int(mov["sairam"] or 0)
+    resumo = {
+        "antes": n_antes,
+        "depois": n_depois,
+        "iguais": n_antes - sairam,
+        "entraram": entraram,
+        "sairam": sairam,
+    }
+
+    por_lei_a = antes.groupBy("lei").agg(F.count("*").alias("antes"))
+    por_lei_d = depois.groupBy("lei").agg(F.count("*").alias("depois"))
+    mov_lei = mudou.groupBy("lei").agg(
+        F.sum("entrou").alias("entraram"), F.sum("saiu").alias("sairam")
+    )
+    por_inst = (
+        por_lei_a.join(por_lei_d, "lei", "full_outer")
+        .join(mov_lei, "lei", "left")
+        .fillna(0, subset=["antes", "depois", "entraram", "sairam"])
+    )
+    _gravar(
+        por_inst.select(*marca, "lei", "antes", "depois", "entraram", "sairam"),
+        tabelas.caminho(raiz, tabelas.REV_INSTITUICOES),
+        filtro,
+        ["ano"],
+    )
+
+    if com_campos:
+        saiu = linhas_que_mudaram(antes, mudou, "saiu")
+        entrou = linhas_que_mudaram(depois, mudou, "entrou")
         _gravar(
-            campos.select(*marca, "*"),
+            campos_corrigidos(saiu, entrou).select(*marca, "*"),
             tabelas.caminho(raiz, tabelas.REV_CAMPOS),
             filtro,
             ["ano"],
         )
-    finally:
-        dif.unpersist()
 
-    resumo = {k: int(v or 0) for k, v in resumo.items()}
     resumo["conferencia"] = conferir_com_except_all(antes, depois, estado_conferencia)
     resumo.update(ano=ano, de_versao=de, para_versao=para)
     print(
         f"{ano} {de} -> {para}: antes {resumo['antes']:,}, depois {resumo['depois']:,}, "
-        f"iguais {resumo['iguais']:,}, entraram {resumo['entraram']:,}, saíram {resumo['sairam']:,}"
+        f"iguais {resumo['iguais']:,}, entraram {resumo['entraram']:,}, "
+        f"saíram {resumo['sairam']:,}",
+        flush=True,
     )
     c = resumo["conferencia"]
     if (c["exato_saiu"], c["exato_entrou"]) != (c["hash_saiu"], c["hash_entrou"]):
@@ -264,7 +282,9 @@ def main(argv: list[str] | None = None) -> int:
     try:
         for ano in args.anos:
             for de, para in PARES:
-                resumos.append(comparar(spark, cfg.tabelas, ano, de, para))
+                # O campo corrigido só no par principal: é o que a página mostra.
+                principal = (de, para) == ("snapshot", "three_year")
+                resumos.append(comparar(spark, cfg.tabelas, ano, de, para, com_campos=principal))
     finally:
         spark.stop()
     saida = cfg.dados / "medicoes" / "revisoes_resumo.json"
