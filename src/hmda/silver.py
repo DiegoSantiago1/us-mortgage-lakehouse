@@ -340,48 +340,53 @@ def aplicar(spark: SparkSession, fonte: Fonte, raiz: Path, forcar: bool = False)
         .load(tabelas.caminho(raiz, tabelas.BRONZE))
         .where((F.col("_ano") == fonte.ano) & (F.col("_versao") == fonte.versao))
     )
+    total = bronze.count()  # o Delta responde pelas estatísticas, sem ler os dados
+    if total == 0:
+        raise ValueError(f"{fonte.chave}: não está na bronze (rode hmda.bronze antes)")
+    # Sem persist(): com o texto original junto, seriam ~10 GB para 26 mi de linhas.
+    # Válidas e rejeitadas leem a bronze cada uma uma vez; as contagens vêm das
+    # tabelas já gravadas (D33).
     df = transformar(bronze).withColumn("congelado_em", F.lit(congelado_em(fonte)))
-    df = df.persist()
-    try:
-        total = df.count()
-        if total == 0:
-            raise ValueError(f"{fonte.chave}: não está na bronze (rode hmda.bronze antes)")
-        validas = df.where(F.size("_rejeicoes") == 0).drop("_rejeicoes", "_bruto")
-        rejeitadas = df.where(F.size("_rejeicoes") > 0).select(
-            "ano", "versao", "_rejeicoes", "_bruto"
+    validas = df.where(F.size("_rejeicoes") == 0).drop("_rejeicoes", "_bruto")
+    rejeitadas = df.where(F.size("_rejeicoes") > 0).select("ano", "versao", "_rejeicoes", "_bruto")
+
+    caminho = tabelas.caminho(raiz, tabelas.SILVER)
+    filtro = f"ano = {fonte.ano}"  # Fonte já validou o ano (int)
+    escrita = validas.write.format("delta").partitionBy("ano")
+    nova = not DeltaTable.isDeltaTable(spark, caminho)
+    if nova:
+        escrita.mode("errorifexists").save(caminho)
+    else:
+        escrita.mode("overwrite").option("replaceWhere", filtro).save(caminho)
+    # Lido logo depois de gravar: é o commit que "é" esta versão do governo.
+    versao_delta = DeltaTable.forPath(spark, caminho).history(1).collect()[0]["version"]
+    if nova:
+        aplicar_restricoes(spark, caminho)
+
+    caminho_rej = tabelas.caminho(raiz, tabelas.REJEITADOS)
+    filtro_rej = f"ano = {fonte.ano} AND versao = '{fonte.versao}'"
+    escrita_rej = rejeitadas.write.format("delta").partitionBy("ano", "versao")
+    if DeltaTable.isDeltaTable(spark, caminho_rej):
+        escrita_rej.mode("overwrite").option("replaceWhere", filtro_rej).save(caminho_rej)
+    else:
+        escrita_rej.mode("errorifexists").save(caminho_rej)
+
+    gravada = spark.read.format("delta").option("versionAsOf", versao_delta).load(caminho)
+    gravada = gravada.where(F.col("ano") == fonte.ano)
+    n_validas = gravada.count()
+    n_alerta = gravada.where(F.size("alertas") > 0).count()
+    n_rejeitadas = spark.read.format("delta").load(caminho_rej).where(filtro_rej).count()
+    if n_validas + n_rejeitadas != total:
+        raise RuntimeError(
+            f"{fonte.chave}: bronze {total:,} != silver {n_validas:,} + rejeitadas {n_rejeitadas:,}"
         )
-
-        caminho = tabelas.caminho(raiz, tabelas.SILVER)
-        filtro = f"ano = {fonte.ano}"  # Fonte já validou o ano (int)
-        escrita = validas.write.format("delta").partitionBy("ano")
-        nova = not DeltaTable.isDeltaTable(spark, caminho)
-        if nova:
-            escrita.mode("errorifexists").save(caminho)
-        else:
-            escrita.mode("overwrite").option("replaceWhere", filtro).save(caminho)
-        # Lido logo depois de gravar: é o commit que "é" esta versão do governo.
-        versao_delta = DeltaTable.forPath(spark, caminho).history(1).collect()[0]["version"]
-        if nova:
-            aplicar_restricoes(spark, caminho)
-
-        caminho_rej = tabelas.caminho(raiz, tabelas.REJEITADOS)
-        escrita_rej = rejeitadas.write.format("delta").partitionBy("ano", "versao")
-        if DeltaTable.isDeltaTable(spark, caminho_rej):
-            filtro_rej = f"ano = {fonte.ano} AND versao = '{fonte.versao}'"
-            escrita_rej.mode("overwrite").option("replaceWhere", filtro_rej).save(caminho_rej)
-        else:
-            escrita_rej.mode("errorifexists").save(caminho_rej)
-        n_rejeitadas = rejeitadas.count()
-        n_alerta = validas.where(F.size("alertas") > 0).count()
-    finally:
-        df.unpersist()
 
     registro = {
         "ano": fonte.ano,
         "versao": fonte.versao,
         "congelado_em": congelado_em(fonte),
         "versao_delta": versao_delta,
-        "linhas": total - n_rejeitadas,
+        "linhas": n_validas,
         "rejeitadas": n_rejeitadas,
         "com_alerta": n_alerta,
         "aplicado_em": datetime.now(UTC).replace(tzinfo=None),
