@@ -45,7 +45,7 @@ def test_tudo_certo_aprova(spark, tmp_path, lake):
     preparar(spark, tmp_path, lake, LINHAS)
     # A API não conta a linha sem estado (como na vida real).
     pasta = oficial(tmp_path, {"DE": {"1": 2, "3": 1}, "RI": {"1": 0}})
-    resultados = dq.verificar(spark, raiz, pasta)
+    resultados = dq.verificar(spark, raiz, pasta, pasta_referencia=tmp_path)
     assert all(r["passou"] for r in resultados), [r for r in resultados if not r["passou"]]
     assert {r["checagem"] for r in resultados} == {
         "restricoes",
@@ -88,3 +88,27 @@ def test_sem_checagem_ou_silver_mais_nova_bloqueia(spark, tmp_path, lake):
     silver.aplicar(spark, SNAP, raiz, forcar=True)  # a silver muda depois da checagem
     with pytest.raises(dq.DadoReprovado, match="mudou depois"):
         dq.exigir_aprovacao(spark, raiz)
+
+
+def test_contagem_por_instituicao_confere_com_o_transmittal_sheet(spark, tmp_path, lake):
+    raiz, _ = lake
+    preparar(spark, tmp_path, lake, [linha(lei="BANCO_A")] * 3 + [linha(lei="BANCO_B")])
+    pasta = oficial(tmp_path, {"DE": {"1": 4}})
+    ref = tmp_path / "ref"
+    ref.mkdir()
+    (ref / "instituicoes_2021_snapshot.csv").write_text(
+        "lei,nome,estado,cidade,lar_count"
+        + chr(10)
+        + "BANCO_A,A,DE,X,3"
+        + chr(10)
+        + "BANCO_B,B,DE,X,2"
+        + chr(10),
+        encoding="utf-8",
+    )
+    falha = next(
+        r
+        for r in dq.verificar(spark, raiz, pasta, pasta_referencia=ref)
+        if r["checagem"] == "instituicoes"
+    )
+    assert not falha["passou"]
+    assert "('BANCO_B', -1)" in falha["detalhe"]

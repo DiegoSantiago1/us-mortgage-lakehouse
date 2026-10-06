@@ -16,6 +16,7 @@ services:
       - ./scripts:/app/scripts
       - ./docs:/app/docs
       - ./docker:/app/docker
+      - ./site:/app/site
       - ./pyproject.toml:/app/pyproject.toml
       # Dados no PC, fora do OneDrive (D6).
       - ${HMDA_DADOS_HOST:-C:/dados/hmda}:/dados

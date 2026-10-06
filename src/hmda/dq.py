@@ -12,9 +12,12 @@ Checagens, por ano:
 - sem_rejeicao         zero linhas rejeitadas (o FFIEC publica dado validado)
 - oficial              silver por estado x resultado = API do FFIEC, célula por célula (D24)
 - essenciais           lei, resultado, finalidade e tipo de empréstimo sem nulo
+- instituicoes         registros por banco (LEI) = lar_count do Transmittal Sheet oficial
+                       (só nos anos com docs/referencia/instituicoes_<ano>_<versao>.csv)
 E uma para a tabela: restricoes (as CHECK constraints estão lá).
 """
 
+import csv
 import sys
 from datetime import UTC, datetime
 from pathlib import Path
@@ -53,7 +56,23 @@ def _ler(spark: SparkSession, raiz: Path, nome: str):
     return spark.read.format("delta").load(tabelas.caminho(raiz, nome))
 
 
-def verificar(spark: SparkSession, raiz: Path, pasta_oficial: Path = oficial.PASTA) -> list[dict]:
+REFERENCIA = Path(__file__).resolve().parents[2] / "docs" / "referencia"
+
+
+def _instituicoes_oficiais(pasta: Path, ano: int, versao: str) -> dict[str, int] | None:
+    arquivo = pasta / f"instituicoes_{ano}_{versao}.csv"
+    if not arquivo.exists():
+        return None
+    with arquivo.open(encoding="utf-8", newline="") as f:
+        return {linha["lei"]: int(linha["lar_count"]) for linha in csv.DictReader(f)}
+
+
+def verificar(
+    spark: SparkSession,
+    raiz: Path,
+    pasta_oficial: Path = oficial.PASTA,
+    pasta_referencia: Path = REFERENCIA,
+) -> list[dict]:
     agora = datetime.now(UTC).replace(tzinfo=None)
     resultados: list[dict] = []
 
@@ -159,6 +178,25 @@ def verificar(spark: SparkSession, raiz: Path, pasta_oficial: Path = oficial.PAS
                 not dif,
                 f"{len(celulas)} células, total oficial {total:,}"
                 + (f"; diferenças (estado, resultado, silver-oficial): {dif[:10]}" if dif else ""),
+            )
+
+        ref = _instituicoes_oficiais(pasta_referencia, ano, versoes[0])
+        if ref is not None:
+            obtido_lei = {
+                r["lei"]: r["count"]
+                for r in silver.where(F.col("ano") == ano).groupBy("lei").count().collect()
+            }
+            dif_lei = sorted(
+                (lei, obtido_lei.get(lei, 0) - ref.get(lei, 0))
+                for lei in set(ref) | set(obtido_lei)
+                if obtido_lei.get(lei, 0) != ref.get(lei, 0)
+            )
+            registrar(
+                ano,
+                "instituicoes",
+                not dif_lei,
+                f"{len(ref):,} instituições"
+                + (f"; diferenças (lei, silver-oficial): {dif_lei[:10]}" if dif_lei else ""),
             )
 
         zerados = {c: v for c, v in nulos.get(ano, {}).items() if c != "ano" and v}

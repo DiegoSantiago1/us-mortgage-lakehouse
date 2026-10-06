@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mortgage Lakehouse · HMDA</title>
+<meta name="description" content="Who gets a mortgage in the US, and how much the government's own data changes: 222 million HMDA records in a PySpark + Delta Lake lakehouse, checked against official totals.">
+<meta property="og:title" content="US Mortgage Lakehouse (HMDA)">
+<meta property="og:description" content="222 million mortgage records, PySpark + Delta Lake, every number checked against the government.">
+<meta name="theme-color" content="#0f1218">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M4 15 16 5l12 10v13H4z' fill='%23c2410c'/%3E%3Crect x='13' y='19' width='6' height='9' fill='%23fff'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="estilo.css">
+</head>
+<body>
+<a class="pular" href="#c1" data-i18n="pular">Pular para o conteúdo</a>
+
+<header class="topo">
+  <div class="topo-in">
+    <a class="marca" href="#inicio"><span class="casa" aria-hidden="true"></span><span data-i18n="marca">Lakehouse do financiamento</span></a>
+    <nav class="capitulos" aria-label="Capítulos" id="nav-capitulos"></nav>
+    <div class="botoes">
+      <button class="botao" id="idioma" type="button" aria-label="Mudar idioma">EN</button>
+      <button class="botao" id="tema" type="button" aria-label="Mudar tema"><span aria-hidden="true">◐</span></button>
+    </div>
+  </div>
+  <div class="progresso" id="progresso" aria-hidden="true"></div>
+</header>
+
+<main>
+  <section class="hero" id="inicio">
+    <p class="sobretitulo" data-i18n="hero.sobre">HMDA · financiamento imobiliário dos EUA · 2018–2025</p>
+    <h1 data-i18n="hero.titulo">Quem consegue financiar a casa nos EUA, e quanto o dado do próprio governo muda</h1>
+    <p class="lead" data-i18n="hero.lead">Todo ano, ~5 mil bancos americanos informam cada pedido de financiamento imobiliário. Carreguei oito anos desse dado num lakehouse (PySpark + Delta Lake), conferi cada número contra o governo e medi o que mudou entre as versões publicadas.</p>
+    <div class="tiles" id="tiles"></div>
+    <p class="nota-hero" data-i18n="hero.nota">Na concessionária onde trabalho eu vejo financiamento de carro ser aprovado e recusado todo dia. Quis entender o mesmo problema em escala nacional, com o maior dado público de crédito que existe.</p>
+  </section>
+
+  <section class="capitulo" id="c1" data-cap="1">
+    <p class="num">01</p>
+    <h2 data-i18n="c1.titulo">O mesmo ano, publicado três vezes</h2>
+    <p data-i18n="c1.texto">O governo (FFIEC/CFPB) publica cada ano em três versões: o Snapshot, um mês depois do prazo; o One Year, um ano depois; e o Three Year, final, quase três anos depois. Entre uma e outra, os bancos corrigem e enviam dados atrasados. O dado público não tem identificador do empréstimo, então não dá para comparar versões por chave.</p>
+    <figure class="figura">
+      <figcaption data-i18n="c1.fig">Registros de 2021 em cada versão (milhões)</figcaption>
+      <div id="linha-tempo" class="grafico"></div>
+    </figure>
+  </section>
+
+  <section class="capitulo" id="c2" data-cap="2">
+    <p class="num">02</p>
+    <h2 data-i18n="c2.titulo">Onde a casa ficou mais cara em relação à renda</h2>
+    <p data-i18n="c2.texto">Mediana de valor do imóvel ÷ renda anual de quem conseguiu financiar a compra da casa própria (1 a 4 unidades, 1ª hipoteca). Quanto mais escuro, mais anos de renda a casa custa.</p>
+    <div class="filtros" role="group" aria-label="Ano" id="anos-mapa"></div>
+    <div class="dupla">
+      <figure class="figura larga">
+        <figcaption><span data-i18n="c2.fig">Valor do imóvel ÷ renda, por estado</span> · <span id="ano-mapa-rotulo"></span></figcaption>
+        <div id="mapa" class="grafico mapa"></div>
+        <div id="legenda-mapa" class="legenda-escala"></div>
+      </figure>
+      <figure class="figura">
+        <figcaption data-i18n="c2.fig2">Estados Unidos, ano a ano</figcaption>
+        <div id="linha-preco" class="grafico"></div>
+      </figure>
+    </div>
+    <figure class="figura">
+      <figcaption data-i18n="c2.fig3">Regiões metropolitanas onde a casa mais pesa na renda</figcaption>
+      <div id="barras-msa" class="grafico"></div>
+    </figure>
+    <details class="tabela"><summary data-i18n="ver-tabela">Ver como tabela</summary><div id="tabela-estados"></div></details>
+  </section>
+
+  <section class="capitulo" id="c3" data-cap="3">
+    <p class="num">03</p>
+    <h2 data-i18n="c3.titulo">O que a alta dos juros de 2022 fez</h2>
+    <p data-i18n="c3.texto">Com juros perto de 3%, milhões refinanciaram a casa em 2020 e 2021. Quando os juros passaram de 6%, o refinanciamento despencou, e a compra também caiu.</p>
+    <div class="dupla">
+      <figure class="figura">
+        <figcaption data-i18n="c3.fig1">Empréstimos originados por finalidade (milhões)</figcaption>
+        <div id="linha-volume" class="grafico"></div>
+      </figure>
+      <figure class="figura">
+        <figcaption data-i18n="c3.fig2">Juros medianos (% ao ano)</figcaption>
+        <div id="linha-juros" class="grafico"></div>
+      </figure>
+    </div>
+  </section>
+
+  <section class="capitulo" id="c4" data-cap="4">
+    <p class="num">04</p>
+    <h2 data-i18n="c4.titulo">Quem tem o crédito negado, e por quê</h2>
+    <p data-i18n="c4.texto">Taxa de negativa = negados ÷ (originados + aprovados + negados). Desistências e pedidos incompletos ficam fora da conta.</p>
+    <div class="dupla">
+      <figure class="figura">
+        <figcaption data-i18n="c4.fig1">Taxa de negativa por finalidade</figcaption>
+        <div id="linha-negativa" class="grafico"></div>
+      </figure>
+      <figure class="figura">
+        <figcaption><span data-i18n="c4.fig2">Motivos citados nas negativas de compra</span> · <span id="ano-motivos"></span></figcaption>
+        <div id="barras-motivos" class="grafico"></div>
+      </figure>
+    </div>
+  </section>
+
+  <section class="capitulo" id="c5" data-cap="5">
+    <p class="num">05</p>
+    <h2 data-i18n="c5.titulo">Perfis parecidos, respostas diferentes?</h2>
+    <p data-i18n="c5.texto">Comparei cada pedido de compra com pedidos do mesmo estado, tipo de empréstimo e faixas de renda, dívida/renda, entrada e valor. A razão observado ÷ esperado mostra quantas negativas um grupo teve a mais (acima de 1) ou a menos (abaixo de 1) do que pessoas com perfil parecido.</p>
+    <div class="aviso" role="note">
+      <strong data-i18n="c5.aviso-t">Leia com cuidado.</strong>
+      <span data-i18n="c5.aviso">O dado público não tem score de crédito nem patrimônio. Uma diferença não prova discriminação: mostra onde vale olhar mais de perto. Só publico grupos com pelo menos 1.000 pedidos.</span>
+    </div>
+    <div class="filtros" role="group" aria-label="Ano" id="anos-equidade"></div>
+    <figure class="figura">
+      <figcaption data-i18n="c5.fig">Negativas observadas ÷ esperadas para o perfil (1,0 = igual a perfis parecidos)</figcaption>
+      <div id="barras-equidade" class="grafico"></div>
+    </figure>
+    <details class="tabela"><summary data-i18n="ver-tabela">Ver como tabela</summary><div id="tabela-equidade"></div></details>
+  </section>
+
+  <section class="capitulo" id="c6" data-cap="6">
+    <p class="num">06</p>
+    <h2 data-i18n="c6.titulo">Quanto o dado do governo muda</h2>
+    <p data-i18n="c6.texto">Sem identificador do empréstimo, comparei as versões como multiconjuntos: cada linha vira uma impressão digital (hash do texto das 99 colunas) e conto quantas vezes ela aparece em cada versão. Linhas idênticas repetidas são respeitadas. A conta foi conferida, em todo estado testado, contra a diferença exata do Spark (exceptAll).</p>
+    <div class="tiles" id="tiles-revisoes"></div>
+    <div class="dupla">
+      <figure class="figura">
+        <figcaption><span data-i18n="c6.fig1">Bancos que mais revisaram</span> · Snapshot → Three Year</figcaption>
+        <div class="filtros" role="group" aria-label="Ano" id="anos-revisao"></div>
+        <div id="barras-bancos" class="grafico"></div>
+      </figure>
+      <figure class="figura">
+        <figcaption data-i18n="c6.fig2">O que mais se corrige: pares de linhas que diferem em um só campo</figcaption>
+        <div id="barras-campos" class="grafico"></div>
+      </figure>
+    </div>
+    <figure class="figura">
+      <figcaption data-i18n="c6.fig3">As métricas mudam com a versão?</figcaption>
+      <div id="tabela-impacto"></div>
+    </figure>
+  </section>
+
+  <section class="capitulo" id="c7" data-cap="7">
+    <p class="num">07</p>
+    <h2 data-i18n="c7.titulo">Como foi feito</h2>
+    <div id="arquitetura" class="grafico arquitetura"></div>
+    <ul class="fatos" id="fatos"></ul>
+    <div class="links">
+      <a class="botao-grande" href="https://github.com/DiegoSantiago1/us-mortgage-lakehouse" id="link-codigo" data-i18n="c7.codigo">Ver o código no GitHub</a>
+      <a class="botao-grande secundario" href="https://diegosantiago1.github.io/Portifolio/#projetos" data-i18n="c7.portfolio">Ver no portfólio</a>
+    </div>
+  </section>
+</main>
+
+<footer class="rodape">
+  <p><span data-i18n="rodape.fonte">Fonte: FFIEC / CFPB, HMDA Modified LAR (dados públicos do governo dos EUA). Gerado em</span> <span id="gerado-em"></span>.</p>
+  <p data-i18n="rodape.autor">Diego Freitas Santiago · Recife, Brasil</p>
+  <p data-i18n="rodape.fim">Obrigado pela leitura.</p>
+</footer>
+
+<div class="tooltip" id="tooltip" role="tooltip" hidden></div>
+
+<script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/topojson-client@3.1.0/dist/topojson-client.min.js"></script>
+<script src="i18n.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

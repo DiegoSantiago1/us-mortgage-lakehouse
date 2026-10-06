@@ -198,3 +198,46 @@ def test_ano_ausente_na_bronze_e_erro(spark, lake):
     raiz, _ = lake
     with pytest.raises(Exception):  # noqa: B017 (sem bronze nenhuma: o Delta reclama do caminho)
         silver.aplicar(spark, SNAP, raiz)
+
+
+def test_1111_e_isencao_so_nos_campos_codificados(spark, tmp_path, lake):
+    """1111 = "isento" no tipo de score (código); na renda, 1111 é US$ 1,111 milhão."""
+    raiz, _ = lake
+    carregar_bronze(
+        spark,
+        tmp_path,
+        lake,
+        SNAP,
+        [linha(lei="SCORE", applicant_credit_score_type="1111"), linha(lei="RICO", income="1111")],
+    )
+    reg = silver.aplicar(spark, SNAP, raiz)
+    assert reg["rejeitadas"] == 0
+    linhas = {r["lei"]: r for r in ler(spark, raiz, tabelas.SILVER).collect()}
+    assert linhas["SCORE"]["tipo_score"] is None and linhas["SCORE"]["tem_isencao"] is True
+    assert linhas["RICO"]["renda_milhares"] == 1111 and linhas["RICO"]["tem_isencao"] is False
+
+
+def test_casos_reais_de_2018_nao_sao_rejeitados(spark, tmp_path, lake):
+    """Achados na carga real: 1111 nos motivos (isento), juros absurdos e idade 9999."""
+    raiz, _ = lake
+    carregar_bronze(
+        spark,
+        tmp_path,
+        lake,
+        SNAP,
+        [
+            linha(lei="ISENTO", denial_reason_1="1111", debt_to_income_ratio="Exempt"),
+            linha(lei="JUROS", interest_rate="260000.0"),
+            linha(lei="SPREAD", interest_rate="Exempt", rate_spread="-9999997.0"),
+            linha(lei="IDADE", applicant_age="9999"),
+        ],
+    )
+    reg = silver.aplicar(spark, SNAP, raiz)
+    assert (reg["linhas"], reg["rejeitadas"]) == (4, 0)
+    linhas = {r["lei"]: r for r in ler(spark, raiz, tabelas.SILVER).collect()}
+    assert linhas["ISENTO"]["motivo_negativa_1"] is None and linhas["ISENTO"]["tem_isencao"]
+    assert linhas["JUROS"]["alertas"] == ["juros implausível"]
+    assert float(linhas["JUROS"]["taxa_juros"]) == 260000.0  # guardado como veio
+    assert linhas["SPREAD"]["alertas"] == ["spread implausível"]
+    assert linhas["IDADE"]["idade_faixa"] is None
+    assert linhas["IDADE"]["alertas"] == ["idade 9999 fora da documentação"]
