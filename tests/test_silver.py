@@ -241,3 +241,24 @@ def test_casos_reais_de_2018_nao_sao_rejeitados(spark, tmp_path, lake):
     assert linhas["SPREAD"]["alertas"] == ["spread implausível"]
     assert linhas["IDADE"]["idade_faixa"] is None
     assert linhas["IDADE"]["alertas"] == ["idade 9999 fora da documentação"]
+
+
+def test_codigos_novos_de_score_e_unidades_zero_nao_sao_rejeitados(spark, tmp_path, lake):
+    """Achados na carga real: score 11-15 (2022+) e total_units = "0" (1 linha em 2019)."""
+    raiz, _ = lake
+    carregar_bronze(
+        spark,
+        tmp_path,
+        lake,
+        SNAP,
+        [
+            linha(lei="FICO10T", applicant_credit_score_type="14"),
+            linha(lei="ZERO", total_units="0"),
+        ],
+    )
+    reg = silver.aplicar(spark, SNAP, raiz)
+    assert (reg["linhas"], reg["rejeitadas"]) == (2, 0)
+    linhas = {r["lei"]: r for r in ler(spark, raiz, tabelas.SILVER).collect()}
+    assert linhas["FICO10T"]["tipo_score"] == 14
+    assert linhas["ZERO"]["unidades"] is None
+    assert linhas["ZERO"]["alertas"] == ["total_units fora da documentação"]

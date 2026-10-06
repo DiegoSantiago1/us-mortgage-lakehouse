@@ -55,7 +55,9 @@ DOMINIOS: dict[str, tuple[int, ...]] = {
     "hoepa_status": (1, 2, 3),
     "applicant_sex": (1, 2, 3, 4, 6),
     "co_applicant_sex": (1, 2, 3, 4, 5, 6),
-    "applicant_credit_score_type": (1, 2, 3, 4, 5, 6, 7, 8, 9),  # 1111 = isento: vira nulo
+    # 11-15 (FICO 9, FICO 8, FICO 10, FICO 10T, VantageScore 4.0) aparecem a partir de
+    # 2022 (medido: 952 mil em 2022, 1,03 mi em 2025). 1111 = isento: vira nulo.
+    "applicant_credit_score_type": (1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 13, 14, 15),
     "denial_reason_1": (1, 2, 3, 4, 5, 6, 7, 8, 9, 10),
     "denial_reason_2": (1, 2, 3, 4, 5, 6, 7, 8, 9),
     "denial_reason_3": (1, 2, 3, 4, 5, 6, 7, 8, 9),
@@ -249,8 +251,7 @@ def _validar(df: DataFrame, com_bruto: bool) -> DataFrame:
                 F.when(presente & F.col(destino).isNull(), F.lit(f"{origem} fora do domínio"))
             )
         elif origem in TEXTO_COM_DOMINIO:
-            ruim = presente & ~F.col(origem).isin(*TEXTO_COM_DOMINIO[origem])
-            motivos.append(F.when(ruim, F.lit(f"{origem} fora do domínio")))
+            pass  # campo descritivo: valor fora da documentação vira alerta (D37)
         elif tipo != "texto":
             motivos.append(
                 F.when(presente & F.col(destino).isNull(), F.lit(f"{origem} não numérico"))
@@ -278,6 +279,13 @@ def _validar(df: DataFrame, com_bruto: bool) -> DataFrame:
             ),
             F.when(F.col("estado").isNull(), F.lit("sem estado")),
             F.when(F.col("idade_faixa") == "9999", F.lit("idade 9999 fora da documentação")),
+            *[
+                F.when(
+                    F.col(origem).isNotNull() & ~F.col(origem).isin(*permitidos),
+                    F.lit(f"{origem} fora da documentação"),
+                )
+                for origem, permitidos in TEXTO_COM_DOMINIO.items()
+            ],
             # Número legível mas implausível (medido: juros de 260000%) não é rejeitado:
             # o FFIEC publica e conta a linha. Fica marcado para as análises filtrarem.
             F.when(
@@ -288,8 +296,11 @@ def _validar(df: DataFrame, com_bruto: bool) -> DataFrame:
         ]
     )
     finais = []
+    descritivos = {d: TEXTO_COM_DOMINIO[o] for o, d, _ in CAMPOS if o in TEXTO_COM_DOMINIO}
     for _, destino, tipo in CAMPOS:
         coluna = F.col(destino)
+        if destino in descritivos:  # fora da documentação: nulo (o alerta guarda o motivo)
+            coluna = F.when(coluna.isin(*descritivos[destino]), coluna)
         if destino == "motivo_negativa_1":  # 10 = "não se aplica"
             coluna = F.when(coluna == 10, F.lit(None)).otherwise(coluna)
         elif destino == "idade_faixa":  # 8888 = "não se aplica"; 9999 = ver alerta
