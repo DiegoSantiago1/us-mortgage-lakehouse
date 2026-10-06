@@ -17,6 +17,7 @@ def criar_sessao(
     driver_memory: str = "6g",
     nucleos: str = "*",
     particoes_shuffle: int = 48,
+    extras: dict[str, str] | None = None,
 ) -> SparkSession:
     builder = (
         SparkSession.builder.appName(nome)
@@ -33,6 +34,8 @@ def criar_sessao(
         .config("spark.sql.shuffle.partitions", str(particoes_shuffle))
         .config("spark.ui.showConsoleProgress", "false")
     )
+    for chave, valor in (extras or {}).items():
+        builder = builder.config(chave, valor)
     pasta_jars = os.environ.get("HMDA_JARS", "")
     if pasta_jars and Path(pasta_jars).is_dir():
         jars = sorted(str(j) for j in Path(pasta_jars).glob("*.jar"))
