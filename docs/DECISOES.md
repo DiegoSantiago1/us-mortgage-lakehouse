@@ -115,3 +115,15 @@ O FFIEC publica e **conta** essas linhas: rejeitá-las quebraria a conferência 
 Regra: nos campos **descritivos** (unidades, limite conforme, idade), valor fora da documentação vira **nulo + alerta**, e a linha fica, porque o oficial a conta. Os **códigos centrais** da análise (resultado, finalidade, tipo, garantia, ocupação, motivos) continuam rejeitando: um valor inválido ali quebraria as contas, e a conferência oficial avisaria.
 
 **D38. A lista de estados da consulta oficial inclui FM, MH e PW.** Na primeira rodada do `dq`, 2018, 2020 e 2023 falharam por 1 ou 2 linhas em **FM, MH e PW** (Micronésia, Ilhas Marshall e Palau, Estados Associados aos EUA). Eu não tinha incluído esses códigos na consulta à API. A checagem fez o papel dela: barrou a publicação por **uma** linha. Depois de incluir os três, os 8 anos bateram célula por célula (472 células por ano), e 2021 e 2022 bateram banco por banco.
+
+**D39. Revisões comparam só o que o banco informa, com números normalizados.** A primeira rodada real deu um resultado absurdo: de One Year para Three Year de 2021, só 67.557 de 26 milhões de linhas ficaram iguais. A investigação (Vermont, coluna por coluna) achou **dois efeitos que não são revisão dos bancos**:
+- o FFIEC **recalculou os campos de censo** (`tract_to_msa_income_percentage` 111,0 → 92,09) em quase todas as linhas;
+- o Snapshot e o One Year gravam números como ponto flutuante (`2560.0`, `2.6499999999999999`), e o Three Year guarda o texto do banco (`2560.00`, `00120`).
+
+Correção:
+- os campos calculados pelo FFIEC (`tract_*`, `ffiec_*`, `derived_*`) saem da impressão digital;
+- os 15 valores numéricos são arredondados a 6 casas, sem zeros à direita, antes do hash.
+
+Em Vermont, as mudanças caíram de 99,7% para ~3,4% das linhas (Snapshot → Three Year). Testes novos fixam os dois casos e provam que mudança de valor de verdade continua aparecendo. Lição: um hash do texto cru mede **formato**, não conteúdo. Comparar versões exige definir o que é "o mesmo dado".
+
+**D40. O disco virtual do Docker precisa de compactação periódica.** O `docker_data.vhdx` chegou a 79,9 GB para ~45 GB de uso real, por causa das extrações de CSV de 10 GB, das silvers refeitas e do shuffle das revisões. O C: ficou com 2,25 GB livres e o Docker parou de responder no meio de uma comparação. Nada se perdeu, porque tudo o que estava pronto estava em commit do Delta. `scripts/compactar_docker.ps1` (como administrador) faz `fstrim` na VM e `diskpart compact vdisk`: devolveu **32,3 GB**. As revisões agora rodam com um vigia que para o Spark se o C: cair abaixo de 6 GB.
