@@ -11,7 +11,16 @@ A PySpark + Delta Lake lakehouse over **222.7 million US mortgage records** (HMD
 
 **Direct link:** https://diegosantiago1.github.io/us-mortgage-lakehouse/ (opens the results page: a map of the US, rates, denials, fairness and the revisions chapter, in English or Portuguese, light or dark).
 
-<!-- RESULTADOS -->
+## Results (measured)
+
+| Question | Answer |
+|---|---|
+| What did the 2022 rate hike do? | Refinance originations fell from **5.88M (2020) to 0.14M (2023), −98%**, as the median rate went from 2.99% to 6.49%. Home purchases fell from 4.48M (2021) to 2.87M (2023), at a median rate of 6.63%. |
+| Where are homes least affordable? | Median home value ÷ income of home buyers: 3.21 (2018) → **3.80 (2021 peak)** → 3.42 (2025). Highest in 2025: Hawaii 4.63, Utah 4.34, Washington 4.17, California 4.16. Lowest: Iowa and West Virginia 2.85, Louisiana 2.84. |
+| Who gets denied, and why? | Home-purchase denial rate: 11.7% (2021) → **15.1% (2023)** → 14.0% (2025). Reasons cited in 2025: debt-to-income 40%, credit history 36%, insufficient cash 17%. |
+| Similar profiles, different answers? | 2025 home purchases, compared within cells of the same state, loan type, income, DTI, LTV and loan amount: Black applicants had **1.37×** the denials expected for their profile (17.0% raw rate), Asian 1.12×, Hispanic 1.09×, non-Hispanic White 0.81×. The public data has no credit score, so this is where to look closer, not proof of discrimination. |
+| How much does the government's data change? | 2021, Snapshot → Three Year: **1.39M rows removed or corrected and 1.54M added (~5%)**; 727 of 4,377 lenders (17%) changed something. The most-corrected single field is the rate spread, then the automated underwriting system and income. Yet national metrics barely move: price/income 3.798 → 3.796, purchase denial rate 11.76% → 11.72%. **The Snapshot is safe for national analysis.** |
+| Can the numbers be trusted? | 43/43 quality checks pass. All 8 years match the FFIEC API cell by cell (state × outcome), 2021–2022 match lender by lender, and my 2023 denial rates by race land within **0.06 pp** of the figures the CFPB published. |
 
 ## The problem
 
@@ -51,7 +60,7 @@ Everything runs locally in Docker (Python 3.13, Java 21, PySpark 4.2.0, delta-sp
 |---|---|
 | Idempotent ingestion | A file already loaded (same SHA-256) is skipped; a republished file replaces only its own partition (`replaceWhere`). Downloads resume with HTTP Range. |
 | Nothing lost silently | Lines are counted while unzipping, independently of Spark. If the Delta table holds a different number, it is rolled back with `RESTORE`. 222,705,887 rows in, 222,705,887 rows stored, 0 malformed. |
-| Change data without a key | Each row becomes a 96-bit fingerprint (xxhash64 + murmur3 of its 99 text columns, with a null marker). Versions are compared as **multisets** (identical duplicate rows are legitimate). Every run is cross-checked against Spark's exact `exceptAll` on a whole state. |
+| Change data without a key | Each row becomes a 96-bit fingerprint (xxhash64 + murmur3 of its 86 lender-reported columns, numbers normalized, with a null marker). Versions are compared as **multisets** (identical duplicate rows are legitimate). Every run is cross-checked against Spark's exact `exceptAll` on a whole state. |
 | "Which field was corrected?" | One hash per column combined with XOR: "the row without column X" = total XOR hash(X). The first version (99 hashes of 98 columns) ran the JVM out of memory on a 3-row test. |
 | Quality gates | State × outcome matched against the FFIEC Data Browser API, cell by cell; records per lender matched against the Transmittal Sheet (~4,400 lenders). If anything fails, gold and the page refuse to build. |
 | Time travel with meaning | The silver table receives each government version in **publication order** (freeze dates read from the FFIEC site's source), so `VERSION AS OF` answers "what did an analyst see in May 2023?". |
@@ -59,6 +68,7 @@ Everything runs locally in Docker (Python 3.13, Java 21, PySpark 4.2.0, delta-sp
 
 ## What the real data taught me (bugs found and fixed)
 
+- **"99.7% of rows changed" was a formatting artifact.** My first version comparison hashed the raw text: almost every 2021 row "changed" between One Year and Three Year. Column by column on one state, the cause was two things that are not lender revisions: the Snapshot and One Year store numbers as floats (`2560.0`, `2.6499999999999999`) while the Three Year keeps the lender's text (`2560.00`, `00120`), and the government recalculated the census fields for every row. Comparing only the 86 lender-reported fields with normalized numbers, it is ~5%. Lesson: a hash of raw text measures format, not content.
 - **303,002 false rejections in 2018.** My first rules rejected rows the government publishes and counts: exempt lenders report denial reason `1111`; some rates are unreadable as `decimal(8,3)` (an interest rate of 260,000%); an applicant age of `9999`. The rejected-rows table, which keeps the original text, showed the cause in minutes. New rule: a readable number, even absurd, becomes an **alert**, never a rejection.
 - **A slow silver layer (1,900 rows/s per core).** I repeated the same cleaning inside every rule, and the generated code grew until Spark fell back to interpreted evaluation. On top of that, lambda functions (`exists`, `array_compact`) always run interpreted in Spark. Staging the transform (clean → type → validate) and replacing those with `OR`/`concat_ws` took a year from 803 s to 548 s.
 - **A download resume that mixed two files.** If the connection dropped and the government replaced the file before the retry, the Range request glued the old start to the new end. With equal sizes, the corrupt zip passed. Fixed by storing the ETag next to the partial file; a test reproduces it.
@@ -76,7 +86,7 @@ docker compose run --rm spark python -m hmda.dq                   # exits 1 if a
 docker compose run --rm spark python -m hmda.revisoes
 docker compose run --rm spark python -m hmda.gold
 docker compose run --rm spark python -m hmda.exportar_site
-# 3. Tests
+# 3. Tests (64 tests, ~19 min: each one builds small Delta tables; no downloads)
 docker compose run --rm spark pytest
 ```
 

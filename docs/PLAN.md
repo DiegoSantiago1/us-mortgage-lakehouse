@@ -7,11 +7,11 @@
 | Grill | Feito (06/10/2026); respostas do Diego em [DECISOES.md](DECISOES.md) |
 | 0 Ambiente e medição | Feita (06/10/2026): imagem Docker, download idempotente, 2021 medido, escopo decidido (D19–D26) |
 | 1 Ingestão (bronze) | Feita (06/10): 12 arquivos, 222.705.887 linhas, 0 malformadas, 78 min |
-| 2 Silver tipada + qualidade | Código e testes prontos; carga real corrigida (D33, D34) e rodando |
-| 3 Versões e revisões (CDC por hash) | Código e testes prontos (D30, D31); roda depois da silver |
-| 4 Gold e análises | Código e testes prontos (D32); roda depois do dq |
-| 5 Página de resultados | Pronta com dado sintético; falta o dado real |
-| 6 Fechamento (README, CI, revisões) | README EN/PT e CI escritos; faltam resultados e as três revisões |
+| 2 Silver tipada + qualidade | Feita (06/10): 12 versões, 0 rejeitadas; dq 43/43 (oficial por estado e por banco) |
+| 3 Versões e revisões (CDC por hash) | Feita (06–07/10): 86 campos do banco, números normalizados (D39); ~5% das linhas mudam |
+| 4 Gold e análises | Feita (07/10): 5 análises + impacto; conferência externa com o CFPB (±0,06 p.p.) |
+| 5 Página de resultados | Feita (07/10): dados reais, 4 cenários verificados com Playwright |
+| 6 Fechamento (README, CI, revisões) | Feita em parte: README EN/PT com resultados, CI escrito, 64 testes; falta criar o repositório (pedido do Diego) e publicar |
 | 7 Databricks Free (opcional) | Não começada |
 
 > Plano escrito em 06/10/2026, depois do grill. Números marcados com **(medido)** foram medidos; os marcados com **(oficial)** vêm da documentação do FFIEC/CFPB; **(estimativa)** ainda precisa ser medido. Itens marcados com **[a conferir]** dependem da fase 0.

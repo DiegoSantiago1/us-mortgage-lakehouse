@@ -5,11 +5,14 @@ docs/APRENDIZADO.md
 # Segredos e configuração local
 .env
 
-# Dados (ficam em C:\dados\hmda, fora do repositório)
-dados/
+# Dados (ficam em C:\dados\hmda, fora do repositório). Só a pasta da raiz:
+# site/dados/ (o JSON agregado da página) entra no git.
+/dados/
 *.zip
 *.csv
 !tests/dados/*.csv
+# Referências pequenas do FFIEC (nomes de bancos e regiões metropolitanas).
+!docs/referencia/*.csv
 spark-warehouse/
 metastore_db/
 derby.log

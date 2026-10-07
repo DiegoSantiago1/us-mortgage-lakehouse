@@ -200,6 +200,25 @@
     el.appendChild(caixa);
   }
 
+  /** Tabela gêmea de um gráfico de linhas (acessibilidade: o tooltip nunca é o único caminho). */
+  function tabelaDasSeries(el, series, fy, fx = (v) => String(v)) {
+    const fig = el.closest("figure");
+    fig.querySelector("details.gemea")?.remove();
+    const det = document.createElement("details");
+    det.className = "tabela gemea";
+    const sum = document.createElement("summary");
+    sum.textContent = t("ver-tabela");
+    const alvo = document.createElement("div");
+    det.append(sum, alvo);
+    fig.appendChild(det);
+    const xs = [...new Set(series.flatMap((s) => s.pontos.map((p) => p.x)))].sort((a, b) => a - b);
+    tabela(alvo, [{ titulo: t("tab.ano") }, ...series.map((s) => ({ titulo: s.nome, n: 1 }))],
+      xs.map((x) => [fx(x), ...series.map((s) => {
+        const p = s.pontos.find((q) => q.x === x);
+        return p && p.y != null ? fy(p.y) : "—";
+      })]));
+  }
+
   function botoesAno(el, anos, atual, aoMudar) {
     el.replaceChildren();
     for (const a of anos) {
@@ -316,9 +335,9 @@
     const b = document.createElement("span"); b.textContent = num(d1, 1) + "x";
     leg.append(a, barra, b);
 
-    linhas(document.getElementById("linha-preco"),
-      [{ nome: "US", cor: cor("--serie-1"), pontos: pr.nacional.map((r) => ({ x: r.ano, y: r.preco_renda })) }],
-      { fy: (v) => num(v, 1) + "x", yZero: false });
+    const seriePreco = [{ nome: "US", cor: cor("--serie-1"), pontos: pr.nacional.map((r) => ({ x: r.ano, y: r.preco_renda })) }];
+    linhas(document.getElementById("linha-preco"), seriePreco, { fy: (v) => num(v, 1) + "x", yZero: false });
+    tabelaDasSeries(document.getElementById("linha-preco"), seriePreco, (v) => num(v, 2) + "x");
 
     const ultimoMsa = d3.max(pr.msa, (r) => r.ano);
     const topo = pr.msa.filter((r) => r.ano === ultimoMsa && r.compras >= 1000)
@@ -345,12 +364,18 @@
   }
 
   function capJuros() {
-    linhas(document.getElementById("linha-volume"), seriesPor(D.mercado, "originacoes"), { fy: (v) => num(v / 1e6, 1) });
-    linhas(document.getElementById("linha-juros"), seriesPor(D.mercado, "juros_mediano"), { fy: (v) => num(v, 2) + "%", yZero: false });
+    const vol = seriesPor(D.mercado, "originacoes");
+    const jur = seriesPor(D.mercado, "juros_mediano");
+    linhas(document.getElementById("linha-volume"), vol, { fy: (v) => num(v / 1e6, 1) });
+    linhas(document.getElementById("linha-juros"), jur, { fy: (v) => num(v, 2) + "%", yZero: false });
+    tabelaDasSeries(document.getElementById("linha-volume"), vol, (v) => num(v));
+    tabelaDasSeries(document.getElementById("linha-juros"), jur, (v) => num(v, 3) + "%");
   }
 
   function capNegativas() {
-    linhas(document.getElementById("linha-negativa"), seriesPor(D.negativas, "taxa_negativa"), { fy: (v) => pct(v, 0) });
+    const neg = seriesPor(D.negativas, "taxa_negativa");
+    linhas(document.getElementById("linha-negativa"), neg, { fy: (v) => pct(v, 0) });
+    tabelaDasSeries(document.getElementById("linha-negativa"), neg, (v) => pct(v, 1));
     const ultimo = d3.max(D.motivos, (r) => r.ano);
     document.getElementById("ano-motivos").textContent = String(ultimo);
     const itens = D.motivos.filter((r) => r.ano === ultimo && r.finalidade_nome === "compra")
