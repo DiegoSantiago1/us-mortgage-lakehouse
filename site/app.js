@@ -574,7 +574,27 @@
         for (const a of document.querySelectorAll("#nav-capitulos a")) a.classList.toggle("ativo", a.dataset.cap === e.target.dataset.cap);
       }
     }, { rootMargin: "-45% 0px -50% 0px" });
-    capitulos.forEach((c) => obs.observe(c));
+    // A abertura também é observada: no topo, nenhum capítulo fica marcado no menu.
+    [document.getElementById("inicio"), ...capitulos].forEach((c) => obs.observe(c));
+    // Setas do teclado pulam de capítulo em capítulo (como na página do Projeto 3).
+    const paginas = [document.getElementById("inicio"), ...capitulos];
+    const movimento = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const atual = () => {
+      const meio = window.scrollY + window.innerHeight * 0.45;
+      let i = 0;
+      paginas.forEach((p, k) => { if (p.offsetTop <= meio) i = k; });
+      return i;
+    };
+    const irPara = (i) => paginas[Math.max(0, Math.min(paginas.length - 1, i))]
+      .scrollIntoView({ behavior: movimento ? "smooth" : "auto", block: "start" });
+    document.addEventListener("keydown", (e) => {
+      if (e.target.closest("input, textarea, select, summary, button, a") || e.altKey || e.ctrlKey || e.metaKey) return;
+      const i = atual();
+      if (["ArrowDown", "PageDown", "ArrowRight", " "].includes(e.key)) { e.preventDefault(); irPara(i + 1); }
+      else if (["ArrowUp", "PageUp", "ArrowLeft"].includes(e.key)) { e.preventDefault(); irPara(i - 1); }
+      else if (e.key === "Home") { e.preventDefault(); irPara(0); }
+      else if (e.key === "End") { e.preventDefault(); irPara(paginas.length - 1); }
+    });
     const barra = document.getElementById("progresso");
     window.addEventListener("scroll", () => {
       const total = document.documentElement.scrollHeight - window.innerHeight;
