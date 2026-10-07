@@ -99,13 +99,15 @@ def preco_renda(silver: DataFrame) -> DataFrame:
         .where(
             (F.col("resultado") == 1) & (F.col("renda_milhares") > 0) & (F.col("valor_imovel") > 0)
         )
-        .withColumn("razao", F.col("valor_imovel") / (F.col("renda_milhares") * 1000))
+        # long antes de multiplicar: há rendas informadas acima de US$ 2,1 bilhões, que
+        # estouram o int (o Spark 4 em modo ANSI para em vez de errar em silêncio).
+        .withColumn("razao", F.col("valor_imovel") / (F.col("renda_milhares").cast("long") * 1000))
     )
     aggs = [
         F.count("*").alias("compras"),
         F.median("razao").alias("preco_renda"),
         F.median("valor_imovel").alias("valor_imovel_mediano"),
-        (F.median("renda_milhares") * 1000).alias("renda_mediana"),
+        (F.median("renda_milhares").cast("double") * 1000).alias("renda_mediana"),
     ]
     r = _por_lugar(base, aggs)
     return r.where((F.col("nivel") != "msa") | (F.col("compras") >= MSA_MINIMA))

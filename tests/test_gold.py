@@ -118,3 +118,10 @@ def test_gold_se_recusa_sem_qualidade_aprovada(spark, tmp_path, lake):
     silver_de(spark, tmp_path, lake, [linha()])
     with pytest.raises(dq.DadoReprovado):
         gold.construir(spark, raiz)
+
+
+def test_renda_gigante_nao_estoura(spark, tmp_path, lake):
+    """Achado real: renda informada acima de US$ 2,1 bi estourava o int ao multiplicar por 1000."""
+    s = silver_de(spark, tmp_path, lake, [linha(income="9999999"), linha(), linha()])
+    r = gold.preco_renda(s).where(F.col("nivel") == "nacional").collect()[0]
+    assert r["compras"] == 3
