@@ -15,7 +15,7 @@
   const t = (k) => (window.TEXTOS[idioma] && window.TEXTOS[idioma][k]) || window.TEXTOS.pt[k] || k;
   const rot = (s) => (idioma === "en" && window.ROTULOS_EN[s]) || s;
   const fin = (s) => t("fin." + s);
-  const campo = (c) => (idioma === "pt" ? window.CAMPOS_PT[c] || c : c.replaceAll("_", " "));
+  const campo = (c) => (idioma === "pt" ? window.CAMPOS_PT[c] || c : window.CAMPOS_EN[c] || c.replaceAll("_", " "));
   const loc = () => (idioma === "pt" ? "pt-BR" : "en-US");
   const num = (v, casas = 0) => Number(v).toLocaleString(loc(), { minimumFractionDigits: casas, maximumFractionDigits: casas });
   const pct = (v, casas = 1) => (v * 100).toLocaleString(loc(), { minimumFractionDigits: casas, maximumFractionDigits: casas }) + "%";
@@ -89,6 +89,12 @@
       .call(d3.axisLeft(y).ticks(5).tickSize(0).tickFormat(fy)).call((g) => g.select(".domain").remove());
     svg.append("g").attr("class", "eixo").attr("transform", `translate(0,${altura - m.b})`)
       .call(d3.axisBottom(x).tickSize(0).tickPadding(8).tickFormat(fx)).call((g) => g.select(".domain").attr("stroke", cor("--eixo")));
+    // Rótulos no fim das linhas só se não colidirem; senão a legenda e o tooltip identificam.
+    const finais = series.map((s) => {
+      const pts = s.pontos.filter((p) => p.y != null).sort((a, b) => a.x - b.x);
+      return pts.length ? y(pts[pts.length - 1].y) : null;
+    }).filter((v) => v != null).sort((a, b) => a - b);
+    const colidem = finais.some((v, i) => i > 0 && v - finais[i - 1] < 14);
     for (const s of series) {
       const pts = s.pontos.filter((p) => p.y != null).sort((a, b) => a.x - b.x);
       svg.append("path").datum(pts).attr("fill", "none").attr("stroke", s.cor).attr("stroke-width", 2)
@@ -98,7 +104,9 @@
       if (ult) {
         svg.append("circle").attr("cx", x(ult.x)).attr("cy", y(ult.y)).attr("r", 4)
           .attr("fill", s.cor).attr("stroke", cor("--superficie")).attr("stroke-width", 2);
-        svg.append("text").attr("class", "rotulo-serie").attr("x", x(ult.x) + 8).attr("y", y(ult.y) + 4).text(s.nome);
+        if (!colidem) {
+          svg.append("text").attr("class", "rotulo-serie").attr("x", x(ult.x) + 8).attr("y", y(ult.y) + 4).text(s.nome);
+        }
       }
     }
     // crosshair: a linha vertical acha o X mais próximo; o tooltip lista todas as séries
@@ -143,7 +151,7 @@
       const y0 = m.t + i * passo;
       const g = svg.append("g").attr("tabindex", 0).style("cursor", "default");
       g.append("text").attr("class", "rotulo-barra").attr("x", m.l - 8).attr("y", y0 + passo / 2 + 4)
-        .attr("text-anchor", "end").text(d.rotulo.length > 34 ? d.rotulo.slice(0, 33) + "…" : d.rotulo);
+        .attr("text-anchor", "end").text(cortar(d.rotulo, Math.floor((m.l - 14) / 7)));
       const partes = d.partes || [{ valor: d.valor, cor: corUnica }];
       let acumulado = 0;
       partes.forEach((p, j) => {
@@ -159,6 +167,9 @@
         .on("pointerleave", esconderTip);
     });
   }
+  // Corta pelo espaço disponível (~7 px por letra a 13 px); o nome inteiro fica no tooltip.
+  const cortar = (texto, max) => (texto.length > max ? texto.slice(0, Math.max(1, max - 1)) + "…" : texto);
+
   function barraArredondada(x, y, w, h, r) {
     r = Math.min(r, w, h / 2);
     return `M${x},${y}H${x + w - r}Q${x + w},${y} ${x + w},${y + r}V${y + h - r}Q${x + w},${y + h} ${x + w - r},${y + h}H${x}Z`;
@@ -376,7 +387,7 @@
     linhasAno.forEach((r, i) => {
       const yc = m.t + i * passo + passo / 2;
       const g = svg.append("g").attr("tabindex", 0);
-      g.append("text").attr("class", "rotulo-barra").attr("x", m.l - 10).attr("y", yc + 4).attr("text-anchor", "end").text(rot(r.grupo));
+      g.append("text").attr("class", "rotulo-barra").attr("x", m.l - 10).attr("y", yc + 4).attr("text-anchor", "end").text(cortar(rot(r.grupo), Math.floor((m.l - 14) / 7)));
       g.append("line").attr("x1", x(bruta(r))).attr("x2", x(r.razao_obs_esp)).attr("y1", yc).attr("y2", yc).attr("stroke", cor("--eixo")).attr("stroke-width", 2);
       g.append("circle").attr("cx", x(bruta(r))).attr("cy", yc).attr("r", 5).attr("fill", cor("--superficie")).attr("stroke", cor("--mudo")).attr("stroke-width", 2);
       g.append("circle").attr("cx", x(r.razao_obs_esp)).attr("cy", yc).attr("r", 6).attr("fill", corDe(r.razao_obs_esp)).attr("stroke", cor("--superficie")).attr("stroke-width", 2);

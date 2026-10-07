@@ -34,7 +34,7 @@ window.TEXTOS = {
     "c5.aviso": "O dado público não tem score de crédito nem patrimônio. Uma diferença não prova discriminação: mostra onde vale olhar mais de perto. Só publico grupos com pelo menos 1.000 pedidos.",
     "c5.fig": "Negativas observadas ÷ esperadas para o perfil (1,0 = igual a perfis parecidos)",
     "c6.titulo": "Quanto o dado do governo muda",
-    "c6.texto": "Sem identificador do empréstimo, comparei as versões como multiconjuntos: cada linha vira uma impressão digital (hash do texto das 99 colunas) e conto quantas vezes ela aparece em cada versão. Linhas idênticas repetidas são respeitadas. Em toda comparação, a conta é conferida num estado inteiro contra a diferença exata do Spark (exceptAll).",
+    "c6.texto": "Sem identificador do empréstimo, comparei as versões como multiconjuntos: cada linha vira uma impressão digital (hash das 86 colunas informadas pelo banco, com os números normalizados) e conto quantas vezes ela aparece em cada versão. Linhas idênticas repetidas são respeitadas. Ficam de fora os 13 campos que o próprio governo recalcula (dados do censo), e o formato dos números (2560.0 × 2560.00), que mudou entre versões sem mudar o valor. Em toda comparação, a conta é conferida num estado inteiro contra a diferença exata do Spark (exceptAll).",
     "c6.fig1": "Bancos que mais revisaram",
     "c6.fig2": "O que mais se corrige: pares de linhas que diferem em um só campo",
     "c6.fig3": "As métricas mudam com a versão?",
@@ -67,7 +67,7 @@ window.TEXTOS = {
     "fato.5": "<b>Conferência oficial bloqueante:</b> estado × resultado contra a API do FFIEC e registros por banco contra o Transmittal Sheet. Se falha, a página não é gerada.",
     "fato.6": "<b>Time travel:</b> as versões do governo entram na ordem em que foram publicadas; cada uma é um commit, e o passado continua consultável.",
     "fato.7": "<b>Roda sem internet:</b> PySpark 4.2 + Delta 4.4 numa imagem Docker com os jars embutidos.",
-    "fato.8": "<b>Bugs que os testes e os dados acharam:</b> retomada de download que misturava arquivos; 303 mil rejeições falsas por uma regra minha errada; transformação 8x lenta por código gerado grande demais.",
+    "fato.8": "<b>O que os dados me ensinaram:</b> a 1ª comparação dizia que 99,7% das linhas mudavam entre versões, mas era só o formato dos números (2560.0 × 2560.00) e dados do censo recalculados pelo governo; normalizado, são ~5%. E ainda: 303 mil rejeições falsas por uma regra minha errada e uma retomada de download que misturava arquivos.",
     "fin.compra": "compra", "fin.refinanciamento": "refinanciamento", "fin.refinanciamento com saque": "refinanciamento com saque",
     "fin.reforma": "reforma", "fin.outra": "outra",
     "versao.snapshot": "Snapshot", "versao.one_year": "One Year", "versao.three_year": "Three Year",
@@ -75,8 +75,8 @@ window.TEXTOS = {
     "arq.bronze": "Bronze", "arq.bronze2": "texto intocado · 222,7 mi",
     "arq.silver": "Silver", "arq.silver2": "tipada · CHECK · time travel",
     "arq.dq": "Qualidade", "arq.dq2": "bloqueia se falhar",
-    "arq.gold": "Gold", "arq.gold2": "preço, juros, negativas, equidade",
-    "arq.rev": "Revisões", "arq.rev2": "multiconjunto por hash",
+    "arq.gold": "Gold", "arq.gold2": "5 análises + impacto",
+    "arq.rev": "Revisões", "arq.rev2": "multiconjunto por hash, 86 campos do banco",
     "arq.pagina": "Esta página", "arq.pagina2": "JSON agregado",
     "milhoes": "mi"
   },
@@ -113,7 +113,7 @@ window.TEXTOS = {
     "c5.aviso": "The public data has no credit score or assets. A gap does not prove discrimination: it shows where to look closer. Only groups with at least 1,000 applications are shown.",
     "c5.fig": "Observed ÷ expected denials for the profile (1.0 = same as similar profiles)",
     "c6.titulo": "How much the government's data changes",
-    "c6.texto": "With no loan identifier, I compared versions as multisets: each row becomes a fingerprint (a hash of the text of its 99 columns) and I count how many times it appears in each version. Identical repeated rows are respected. Every comparison is checked over a whole state against Spark's exact difference (exceptAll).",
+    "c6.texto": "With no loan identifier, I compared versions as multisets: each row becomes a fingerprint (a hash of the 86 lender-reported columns, with numbers normalized) and I count how many times it appears in each version. Identical repeated rows are respected. Left out: the 13 fields the government itself recalculates (census data), and number formatting (2560.0 vs 2560.00), which changed between versions without changing the value. Every comparison is checked over a whole state against Spark's exact difference (exceptAll).",
     "c6.fig1": "Lenders that revised the most",
     "c6.fig2": "What gets corrected most: row pairs that differ in a single field",
     "c6.fig3": "Do the metrics change with the version?",
@@ -146,7 +146,7 @@ window.TEXTOS = {
     "fato.5": "<b>Blocking official checks:</b> state × outcome against the FFIEC API and records per lender against the Transmittal Sheet. If they fail, this page is not generated.",
     "fato.6": "<b>Time travel:</b> government versions are applied in publication order; each one is a commit, and the past stays queryable.",
     "fato.7": "<b>Runs offline:</b> PySpark 4.2 + Delta 4.4 in a Docker image with the jars baked in.",
-    "fato.8": "<b>Bugs the tests and the data caught:</b> a download resume that mixed two files; 303k false rejections from a wrong rule of mine; an 8x slow transform from oversized generated code.",
+    "fato.8": "<b>What the data taught me:</b> my first comparison said 99.7% of rows changed between versions, but it was only number formatting (2560.0 vs 2560.00) and census fields recalculated by the government; normalized, it is ~5%. Also: 303k false rejections from a wrong rule of mine, and a download resume that mixed two files.",
     "fin.compra": "purchase", "fin.refinanciamento": "refinance", "fin.refinanciamento com saque": "cash-out refinance",
     "fin.reforma": "home improvement", "fin.outra": "other",
     "versao.snapshot": "Snapshot", "versao.one_year": "One Year", "versao.three_year": "Three Year",
@@ -154,8 +154,8 @@ window.TEXTOS = {
     "arq.bronze": "Bronze", "arq.bronze2": "untouched text · 222.7M",
     "arq.silver": "Silver", "arq.silver2": "typed · CHECK · time travel",
     "arq.dq": "Quality", "arq.dq2": "blocks if it fails",
-    "arq.gold": "Gold", "arq.gold2": "price, rates, denials, fairness",
-    "arq.rev": "Revisions", "arq.rev2": "multiset by hash",
+    "arq.gold": "Gold", "arq.gold2": "5 analyses + impact",
+    "arq.rev": "Revisions", "arq.rev2": "multiset by hash, 86 lender fields",
     "arq.pagina": "This page", "arq.pagina2": "aggregated JSON",
     "milhoes": "M"
   }
@@ -188,6 +188,13 @@ window.ROTULOS_EN = {
 };
 
 // Nomes dos campos do HMDA, para o gráfico de correções.
+window.CAMPOS_EN = {
+  "aus_1": "automated underwriting system", "rate_spread": "rate spread",
+  "initially_payable_to_institution": "initially payable to lender", "census_tract": "census tract",
+  "combined_loan_to_value_ratio": "loan-to-value", "debt_to_income_ratio": "debt-to-income",
+  "action_taken": "outcome (action taken)", "purchaser_type": "loan buyer", "lei": "lender (LEI)"
+};
+
 window.CAMPOS_PT = {
   "income": "renda", "loan_amount": "valor do empréstimo", "property_value": "valor do imóvel",
   "interest_rate": "taxa de juros", "rate_spread": "spread", "action_taken": "resultado",
