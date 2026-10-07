@@ -11,6 +11,8 @@ A PySpark + Delta Lake lakehouse over **222.7 million US mortgage records** (HMD
 
 **Direct link:** https://diegosantiago1.github.io/us-mortgage-lakehouse/ (opens the results page: a map of the US, rates, denials, fairness and the revisions chapter, in English or Portuguese, light or dark).
 
+![Results page: home value ÷ income by state in 2021 and the national series from 2018 to 2025](docs/imagens/pagina.png)
+
 ## Results (measured)
 
 | Question | Answer |

@@ -11,6 +11,8 @@ Um lakehouse em PySpark + Delta Lake com **222,7 milhões de registros de financ
 
 **Link direto:** https://diegosantiago1.github.io/us-mortgage-lakehouse/ (abre a página de resultados: mapa dos EUA, juros, negativas, equidade e o capítulo das revisões, em português ou inglês, claro ou escuro).
 
+![Página de resultados: valor do imóvel ÷ renda por estado em 2021 e a série nacional de 2018 a 2025](docs/imagens/pagina.png)
+
 ## Resultados (medidos)
 
 | Pergunta | Resposta |
