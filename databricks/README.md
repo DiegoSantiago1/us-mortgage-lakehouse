@@ -4,7 +4,25 @@ O exercício de `docs/CATALOGO.md`, agora no Databricks: uma amostra de 1% da si
 
 **Por que uma amostra:** o Free Edition tem cota diária de processamento, armazenamento não documentado e acesso à internet só para domínios aprovados (não baixa do FFIEC). Com 1% de cada ano (1.382.090 linhas, 54,7 MB) a estrutura é a mesma e cabe na cota.
 
-> **Estado:** preparado em 14/10/2026 e **ainda não executado**: depende da conta do Diego no Databricks. A amostra e os números esperados abaixo foram gerados e conferidos no Spark local.
+> **Estado:** executado em 14/10/2026 no Databricks Free Edition (serverless, Unity Catalog `workspace.hmda`). **Todos os números bateram com o Spark local** e o plano mostrou a mesma poda de partições. Resultado abaixo.
+
+## Resultado no Databricks (14/10/2026)
+
+| Conferência | Spark local (gabarito) | Databricks |
+|---|---|---|
+| Pedidos por ano, 2018–2025 | 151.666 · 175.737 · 256.811 · 263.200 · 160.742 · 115.873 · 122.835 · 135.226 | idênticos |
+| Top 5 estados em 2022 | CA 15.543 · TX 13.893 · FL 13.774 · NC 6.134 · GA 6.109 | idênticos |
+| Plano com `WHERE ano = 2022` | `PartitionFilters: [isnotnull(ano), (ano = 2022)]`, `ReadSchema: struct<estado:string>` | igual (no motor Photon) |
+| Plano com `WHERE estado = 'TX'` | sem filtro de partição | sem filtro de partição; o filtro vira `DictionaryFilters` e `RequiredDataFilters`, aplicados dentro dos arquivos |
+| Arquivos lidos com `ano = 2022` | 14 de 109, só a pasta `ano=2022` | 1 de 8, só `ano=2022` |
+
+A tabela do Databricks tem **1 arquivo por ano** porque a amostra é pequena (54,7 MB); na silver local são 109 arquivos. A proporção é a mesma: o filtro na partição lê só o ano pedido, e o filtro em coluna comum lê todos.
+
+![Conferência: pedidos por ano e top 5 estados de 2022, iguais ao Spark local](../docs/img/databricks_conferencia.png)
+
+![EXPLAIN FORMATTED no Databricks com PartitionFilters](../docs/img/databricks_explain.png)
+
+![Arquivos lidos por consulta no Databricks](../docs/img/databricks_arquivos_lidos.png)
 
 ## Passo a passo (uma vez, ~20 minutos)
 

@@ -113,7 +113,7 @@ docker compose run --rm spark pytest
 
 O plano mostra o porquê: `PartitionFilters: [isnotnull(ano), (ano = 2022)]` escolhe as pastas antes de abrir qualquer arquivo, e `ReadSchema: struct<estado:string>` lê 1 coluna de 63. Planos completos e explicação: [docs/CATALOGO.md](docs/CATALOGO.md).
 
-**Databricks:** o mesmo exercício no Unity Catalog, com uma amostra de 1% (1,38 milhão de linhas) e os números esperados calculados localmente no mesmo arquivo, está pronto em [databricks/](databricks/README.md); ainda não foi executado.
+**Databricks:** o mesmo exercício no Unity Catalog, com uma amostra de 1% (1,38 milhão de linhas) e os números esperados calculados localmente no mesmo arquivo, rodou no Databricks Free Edition em 14/10/2026 ([databricks/](databricks/README.md)): todos os números bateram com o Spark local, e o plano mostrou o mesmo `PartitionFilters` (1 de 8 arquivos lidos com `ano = 2022`).
 
 ## Limitações
 

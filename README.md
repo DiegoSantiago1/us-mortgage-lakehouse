@@ -116,7 +116,7 @@ docker compose run --rm spark pytest
 
 The plan shows why: `PartitionFilters: [isnotnull(ano), (ano = 2022)]` picks the folders before any file is opened, and `ReadSchema: struct<estado:string>` reads one column out of 63. Full plans and the explanation: [docs/CATALOGO.md](docs/CATALOGO.md).
 
-**Databricks:** the same exercise on Unity Catalog with a 1% sample (1.38 million rows), with the expected numbers computed locally from the same file, is ready in [databricks/](databricks/README.md); it has not been run yet.
+**Databricks:** the same exercise on Unity Catalog with a 1% sample (1.38 million rows), with the expected numbers computed locally from the same file, ran on Databricks Free Edition on 14 Oct 2026 ([databricks/](databricks/README.md)): every number matched the local Spark run, and the plan showed the same `PartitionFilters` (1 of 8 files read for `ano = 2022`).
 
 ## Limitations
 
