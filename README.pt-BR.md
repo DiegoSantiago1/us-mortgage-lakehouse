@@ -101,6 +101,20 @@ docker compose run --rm spark python -m hmda.exportar_site
 docker compose run --rm spark pytest
 ```
 
+## Catálogo de tabelas e poda de partições (medido)
+
+`python -m hmda.catalogo` registra cada tabela Delta num **metastore Hive** local (Derby embutido) como tabela externa, para consultar o lakehouse pelo nome em SQL (`silver.vigente`, `gold.negativas`...). O mesmo comando mede o que cada consulta lê de verdade da silver de 4,8 GB, particionada por ano:
+
+| Consulta | Arquivos lidos | Pastas de partição lidas |
+|---|---|---|
+| `WHERE ano = 2022` (coluna de partição) | 14 de 109 (13%) | 1 (`ano=2022`) |
+| `WHERE estado = 'TX'` (coluna comum) | 109 de 109 | as 8 |
+| sem filtro | 109 de 109 | as 8 |
+
+O plano mostra o porquê: `PartitionFilters: [isnotnull(ano), (ano = 2022)]` escolhe as pastas antes de abrir qualquer arquivo, e `ReadSchema: struct<estado:string>` lê 1 coluna de 63. Planos completos e explicação: [docs/CATALOGO.md](docs/CATALOGO.md).
+
+**Databricks:** o mesmo exercício no Unity Catalog, com uma amostra de 1% (1,38 milhão de linhas) e os números esperados calculados localmente no mesmo arquivo, está pronto em [databricks/](databricks/README.md); ainda não foi executado.
+
 ## Limitações
 
 - O dado público **não tem score de crédito nem patrimônio**. O capítulo de equidade controla renda, dívida/renda, LTV, valor, tipo de empréstimo e estado, e diz com todas as letras que uma diferença não prova discriminação.

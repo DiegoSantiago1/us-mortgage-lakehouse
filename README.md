@@ -104,6 +104,20 @@ docker compose run --rm spark pytest
 | `alertas`, `tem_isencao` | alerts (kept rows with odd values), row has an Exempt field |
 | `baixar`, `carregar`, `aplicar`, `conferir` | download, load, apply, check |
 
+## Table catalog and partition pruning (measured)
+
+`python -m hmda.catalogo` registers every Delta table in a local **Hive metastore** (embedded Derby) as an external table, so the lakehouse can be queried by name in SQL (`silver.vigente`, `gold.negativas`...). The same command measures what each query really reads from the 4.8 GB silver table, partitioned by year:
+
+| Query | Files read | Partition folders read |
+|---|---|---|
+| `WHERE ano = 2022` (partition column) | 14 of 109 (13%) | 1 (`ano=2022`) |
+| `WHERE estado = 'TX'` (regular column) | 109 of 109 | all 8 |
+| no filter | 109 of 109 | all 8 |
+
+The plan shows why: `PartitionFilters: [isnotnull(ano), (ano = 2022)]` picks the folders before any file is opened, and `ReadSchema: struct<estado:string>` reads one column out of 63. Full plans and the explanation: [docs/CATALOGO.md](docs/CATALOGO.md).
+
+**Databricks:** the same exercise on Unity Catalog with a 1% sample (1.38 million rows), with the expected numbers computed locally from the same file, is ready in [databricks/](databricks/README.md); it has not been run yet.
+
 ## Limitations
 
 - The public data has **no credit score or assets**. The fairness chapter controls for income, debt-to-income, loan-to-value, loan amount, loan type and state, and says plainly that a gap does not prove discrimination.
@@ -113,7 +127,7 @@ docker compose run --rm spark pytest
 
 ## Decisions
 
-Every decision, with the measurement behind it and the alternative I rejected, is in [docs/DECISOES.md](docs/DECISOES.md) (in Portuguese). The plan is in [docs/PLAN.md](docs/PLAN.md).
+Every decision, with the measurement behind it and the alternative I rejected, is in [docs/DECISOES.md](docs/DECISOES.md) (in Portuguese, D1–D42). The plan is in [docs/PLAN.md](docs/PLAN.md).
 
 ## Data and license
 
