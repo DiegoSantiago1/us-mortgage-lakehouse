@@ -102,3 +102,36 @@ def test_amostra_mesma_fracao_por_ano_e_sem_colunas_internas(spark):
     assert sorted(a.collect()) == sorted(amostrar(silver, 0.1).collect())
     with pytest.raises(ValueError):
         amostrar(silver, 0)
+
+
+# ---------------------------------------------------------------- Z-ORDER (experimento)
+def test_zorder_faz_o_filtro_por_estado_pular_arquivos(spark, tmp_path):
+    """Antes, cada arquivo tem todos os estados e nada é pulado; depois do Z-ORDER, sim."""
+    from hmda import zorder
+
+    estados = [f"E{i:02d}" for i in range(20)]
+    linhas = [(2022, estados[i % 20], i) for i in range(4000)]
+    origem = tmp_path / "tabelas" / "silver" / "vigente"
+    spark.createDataFrame(linhas, "ano INT, estado STRING, n INT").write.format(
+        "delta"
+    ).partitionBy("ano").save(str(origem))
+    caminho = zorder.preparar_copia(spark, str(origem), tmp_path / "copia", 2022, 8)
+    antes = zorder.medir(spark, caminho, "E07")
+    # Arquivos pequenos no teste: o OPTIMIZE precisa gerar mais de um arquivo para comparar.
+    zorder.zorder(spark, caminho, bytes_por_arquivo=4000)
+    depois = zorder.medir(spark, caminho, "E07")
+    assert antes.linhas == depois.linhas == 200  # só reorganiza
+    assert antes.arquivos_lidos == antes.arquivos_total  # todo arquivo tem todos os estados
+    assert depois.arquivos_total > 1
+    assert depois.arquivos_lidos < depois.arquivos_total
+    texto = zorder.conclusao(antes, depois)
+    assert "data skipping" in texto
+
+
+def test_conclusao_nao_afirma_o_que_nao_foi_medido():
+    from hmda.zorder import Medicao, conclusao
+
+    antes = Medicao(arquivos_total=14, arquivos_lidos=14, segundos=1.0, linhas=10)
+    assert "não vale" in conclusao(antes, Medicao(1, 1, 0.8, 10))  # virou um arquivo só
+    assert "não vale" in conclusao(antes, Medicao(14, 3, 0.5, 9))  # linhas mudaram
+    assert "não reduziu" in conclusao(antes, Medicao(14, 14, 1.0, 10))

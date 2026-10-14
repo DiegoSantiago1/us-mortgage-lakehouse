@@ -1,5 +1,7 @@
 # US Mortgage Lakehouse (HMDA)
 
+[![ci](https://github.com/DiegoSantiago1/us-mortgage-lakehouse/actions/workflows/ci.yml/badge.svg)](https://github.com/DiegoSantiago1/us-mortgage-lakehouse/actions/workflows/ci.yml)
+
 A PySpark + Delta Lake lakehouse over **222.7 million US mortgage records** (HMDA, 2018–2025): who gets a home loan, where homes got least affordable, what the 2022 rate hike did, and **how much the government's own data changes** between the three versions it publishes for every year. Every number is checked against official totals before it can be published.
 
 🇧🇷 [Leia em português](README.pt-BR.md)
@@ -116,6 +118,8 @@ docker compose run --rm spark pytest
 
 The plan shows why: `PartitionFilters: [isnotnull(ano), (ano = 2022)]` picks the folders before any file is opened, and `ReadSchema: struct<estado:string>` reads one column out of 63. Full plans and the explanation: [docs/CATALOGO.md](docs/CATALOGO.md).
 
+**Z-ORDER, measured:** the state filter reads every file because every file holds every state. On a copy of 2022 (the real silver table is untouched), `OPTIMIZE ... ZORDER BY (estado)` with the same 14 files cut the files read for `estado = 'TX'` from 14 to 2 and the time from 1.16 s to 0.54 s, same 1,388,354 rows ([docs/ZORDER.md](docs/ZORDER.md)). It is not applied to the silver table because the analyses aggregate the whole country. A first run compacted everything into a single file (OPTIMIZE's default target is 1 GB), which made the comparison meaningless; the experiment now keeps the file count.
+
 **Databricks:** the same exercise on Unity Catalog with a 1% sample (1.38 million rows), with the expected numbers computed locally from the same file, ran on Databricks Free Edition on 14 Oct 2026 ([databricks/](databricks/README.md)): every number matched the local Spark run, and the plan showed the same `PartitionFilters` (1 of 8 files read for `ano = 2022`).
 
 ## Limitations
@@ -127,7 +131,7 @@ The plan shows why: `PartitionFilters: [isnotnull(ano), (ano = 2022)]` picks the
 
 ## Decisions
 
-Every decision, with the measurement behind it and the alternative I rejected, is in [docs/DECISOES.md](docs/DECISOES.md) (in Portuguese, D1–D42). The plan is in [docs/PLAN.md](docs/PLAN.md).
+Every decision, with the measurement behind it and the alternative I rejected, is in [docs/DECISOES.md](docs/DECISOES.md) (in Portuguese, D1–D43). The plan is in [docs/PLAN.md](docs/PLAN.md).
 
 ## Data and license
 

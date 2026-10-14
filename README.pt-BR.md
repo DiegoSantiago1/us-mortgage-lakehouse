@@ -1,5 +1,7 @@
 # Lakehouse do financiamento imobiliário dos EUA (HMDA)
 
+[![ci](https://github.com/DiegoSantiago1/us-mortgage-lakehouse/actions/workflows/ci.yml/badge.svg)](https://github.com/DiegoSantiago1/us-mortgage-lakehouse/actions/workflows/ci.yml)
+
 Um lakehouse em PySpark + Delta Lake com **222,7 milhões de registros de financiamento imobiliário dos EUA** (HMDA, 2018–2025): quem consegue financiar a casa, onde ela ficou mais cara em relação à renda, o que a alta de juros de 2022 fez e **quanto o dado do próprio governo muda** entre as três versões que ele publica de cada ano. Todo número é conferido contra os totais oficiais antes de poder ser publicado.
 
 🇺🇸 [Read in English](README.md)
@@ -112,6 +114,8 @@ docker compose run --rm spark pytest
 | sem filtro | 109 de 109 | as 8 |
 
 O plano mostra o porquê: `PartitionFilters: [isnotnull(ano), (ano = 2022)]` escolhe as pastas antes de abrir qualquer arquivo, e `ReadSchema: struct<estado:string>` lê 1 coluna de 63. Planos completos e explicação: [docs/CATALOGO.md](docs/CATALOGO.md).
+
+**Z-ORDER, medido:** o filtro por estado lê todos os arquivos porque todo arquivo tem todos os estados. Numa cópia de 2022 (a silver de verdade não é tocada), `OPTIMIZE ... ZORDER BY (estado)` com os mesmos 14 arquivos reduziu os arquivos lidos para `estado = 'TX'` de 14 para 2 e o tempo de 1,16 s para 0,54 s, com as mesmas 1.388.354 linhas ([docs/ZORDER.md](docs/ZORDER.md)). Não foi aplicado na silver porque as análises agregam o país inteiro. A primeira rodada juntou tudo num arquivo só (o alvo padrão do OPTIMIZE é 1 GB), o que invalidava a comparação; o experimento agora mantém o número de arquivos.
 
 **Databricks:** o mesmo exercício no Unity Catalog, com uma amostra de 1% (1,38 milhão de linhas) e os números esperados calculados localmente no mesmo arquivo, rodou no Databricks Free Edition em 14/10/2026 ([databricks/](databricks/README.md)): todos os números bateram com o Spark local, e o plano mostrou o mesmo `PartitionFilters` (1 de 8 arquivos lidos com `ano = 2022`).
 

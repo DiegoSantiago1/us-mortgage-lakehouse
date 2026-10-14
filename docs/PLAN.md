@@ -12,7 +12,7 @@
 | 4 Gold e análises | Feita (07/10): 5 análises + impacto; conferência externa com o CFPB (±0,06 p.p.) |
 | 5 Página de resultados | Feita (07/10): dados reais, 4 cenários verificados com Playwright |
 | 6 Fechamento (README, CI, revisões) | Feita em parte: README EN/PT com resultados, CI escrito, 64 testes; falta criar o repositório (pedido do Diego) e publicar |
-| 7 Catálogo + Databricks Free | Catálogo Hive local e medição da poda de partições feitos (14/10/2026, D41, docs/CATALOGO.md); Databricks executado em 14/10/2026: números idênticos ao Spark local e mesma poda de partições (D42) |
+| 7 Catálogo + Databricks Free | Catálogo Hive local e medição da poda de partições feitos (14/10/2026, D41, docs/CATALOGO.md); Databricks executado em 14/10/2026: números idênticos ao Spark local e mesma poda de partições (D42); Z-ORDER medido numa cópia: 14 → 2 arquivos (D43) |
 
 > Plano escrito em 06/10/2026, depois do grill. Números marcados com **(medido)** foram medidos; os marcados com **(oficial)** vêm da documentação do FFIEC/CFPB; **(estimativa)** ainda precisa ser medido. Itens marcados com **[a conferir]** dependem da fase 0.
 
