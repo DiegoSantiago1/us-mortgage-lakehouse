@@ -56,7 +56,7 @@ GOLD     price/income, market & rates, denials & reasons, fairness (observed ÷ 
 PAGE     aggregated JSON -> static site (D3, US map, EN/PT) on GitHub Pages
 ```
 
-Everything runs locally in Docker (Python 3.13, Java 21, PySpark 4.2.0, delta-spark 4.4.1, jars baked into the image, so it runs with `--network none`). One command per step, no orchestrator: the pipeline runs a few times a year, when the government publishes a new version.
+Everything runs locally in Docker (Python 3.13, Java 21, PySpark 4.2.0, delta-spark 4.4.1, jars baked into the image, so it runs with `--network none`). One command per step, and an **Airflow** DAG that runs them in order: once a month it checks (HEAD requests only) whether the government published or republished a file, and only then runs the chain. Details in [docs/ORQUESTRACAO.md](docs/ORQUESTRACAO.md).
 
 ## Engineering highlights
 
@@ -75,6 +75,7 @@ Everything runs locally in Docker (Python 3.13, Java 21, PySpark 4.2.0, delta-sp
 - **"99.7% of rows changed" was a formatting artifact.** My first version comparison hashed the raw text: almost every 2021 row "changed" between One Year and Three Year. Column by column on one state, the cause was two things that are not lender revisions: the Snapshot and One Year store numbers as floats (`2560.0`, `2.6499999999999999`) while the Three Year keeps the lender's text (`2560.00`, `00120`), and the government recalculated the census fields for every row. Comparing only the 86 lender-reported fields with normalized numbers, it is ~5%. Lesson: a hash of raw text measures format, not content.
 - **303,002 false rejections in 2018.** My first rules rejected rows the government publishes and counts: exempt lenders report denial reason `1111`; some rates are unreadable as `decimal(8,3)` (an interest rate of 260,000%); an applicant age of `9999`. The rejected-rows table, which keeps the original text, showed the cause in minutes. New rule: a readable number, even absurd, becomes an **alert**, never a rejection.
 - **A slow silver layer (1,900 rows/s per core).** I repeated the same cleaning inside every rule, and the generated code grew until Spark fell back to interpreted evaluation. On top of that, lambda functions (`exists`, `array_compact`) always run interpreted in Spark. Staging the transform (clean → type → validate) and replacing those with `OR`/`concat_ws` took a year from 803 s to 548 s.
+- **Time travel that expired after a week.** The gold layer reads each government version through Delta time travel on the silver table. The first end-to-end Airflow run (21/10/2026) failed on gold: Delta refuses time travel beyond `delta.deletedFileRetentionDuration` (7 days by default) even when nothing was vacuumed, and the versions had been frozen two weeks earlier. The tests never caught it because their tables are seconds old. The silver table now declares a long retention for files and log (D45); after the fix the Airflow run reproduced every published number.
 - **A download resume that mixed two files.** If the connection dropped and the government replaced the file before the retry, the Range request glued the old start to the new end. With equal sizes, the corrupt zip passed. Fixed by storing the ETag next to the partial file; a test reproduces it.
 
 ## Run it
@@ -90,8 +91,11 @@ docker compose run --rm spark python -m hmda.dq                   # exits 1 if a
 docker compose run --rm spark python -m hmda.revisoes
 docker compose run --rm spark python -m hmda.gold
 docker compose run --rm spark python -m hmda.exportar_site
-# 3. Tests (64 tests, ~19 min: each one builds small Delta tables; no downloads)
+# 3. Tests (87 tests, 20 to 30 min: each one builds small Delta tables; no downloads)
 docker compose run --rm spark pytest
+# 4. Orchestration (optional): Airflow 3.3 on top of the same image, UI at http://127.0.0.1:8080
+docker compose --profile airflow build airflow
+docker compose --profile airflow up -d airflow
 ```
 
 ## Glossary (code is in Portuguese)

@@ -177,6 +177,33 @@ def test_versao_menos_madura_ou_repetida_nao_faz_nada(spark, tmp_path, lake):
     assert {r["lei"] for r in ler(spark, raiz, tabelas.SILVER).collect()} == {"O"}
 
 
+def test_retencao_longa_para_o_time_travel_do_gold(spark, tmp_path, lake):
+    # Com o padrão de 7 dias o Delta recusa o time travel do gold uma semana
+    # depois (DELTA_UNSUPPORTED_TIME_TRAVEL_BEYOND_DELETED_FILE_RETENTION_DURATION).
+    raiz, _ = lake
+    carregar_bronze(spark, tmp_path, lake, SNAP, [linha(lei="S")])
+    silver.aplicar(spark, SNAP, raiz)
+    caminho = tabelas.caminho(raiz, tabelas.SILVER)
+    props = DeltaTable.forPath(spark, caminho).detail().collect()[0]["properties"]
+    for chave, valor in silver.RETENCAO.items():
+        assert props[chave] == valor
+
+    # Tabela antiga, gravada antes da correção: a próxima execução corrige,
+    # mesmo quando a versão já é a vigente e não há nada a gravar.
+    spark.sql(
+        f"ALTER TABLE delta.`{caminho}` UNSET TBLPROPERTIES ('delta.deletedFileRetentionDuration')"
+    )
+    silver.aplicar(spark, SNAP, raiz)
+    props = DeltaTable.forPath(spark, caminho).detail().collect()[0]["properties"]
+    assert (
+        props["delta.deletedFileRetentionDuration"]
+        == silver.RETENCAO["delta.deletedFileRetentionDuration"]
+    )
+    versao = DeltaTable.forPath(spark, caminho).history(1).collect()[0]["version"]
+    silver.aplicar(spark, SNAP, raiz)  # já correta: nenhum commit novo
+    assert DeltaTable.forPath(spark, caminho).history(1).collect()[0]["version"] == versao
+
+
 def test_check_constraint_barra_escrita_direta_fora_do_dominio(spark, tmp_path, lake):
     """Defesa em camadas: mesmo sem passar pelo silver.py, a tabela recusa lixo."""
     raiz, _ = lake

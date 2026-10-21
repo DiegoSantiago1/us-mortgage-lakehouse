@@ -56,7 +56,7 @@ GOLD     preço/renda, mercado e juros, negativas e motivos, equidade (observado
 PÁGINA   JSON agregado -> site estático (D3, mapa dos EUA, PT/EN) no GitHub Pages
 ```
 
-Tudo roda localmente em Docker (Python 3.13, Java 21, PySpark 4.2.0 e delta-spark 4.4.1, com os jars embutidos na imagem, então roda com `--network none`). Há um comando por etapa e nenhum orquestrador: o pipeline roda poucas vezes por ano, quando o governo publica uma versão nova.
+Tudo roda localmente em Docker (Python 3.13, Java 21, PySpark 4.2.0 e delta-spark 4.4.1, com os jars embutidos na imagem, então roda com `--network none`). Há um comando por etapa e um DAG do **Airflow** que os roda em ordem: uma vez por mês ele confere (só com HEAD) se o governo publicou ou republicou algum arquivo e, só então, roda a cadeia. Detalhes em [docs/ORQUESTRACAO.md](docs/ORQUESTRACAO.md).
 
 ## Destaques de engenharia
 
@@ -72,6 +72,7 @@ Tudo roda localmente em Docker (Python 3.13, Java 21, PySpark 4.2.0 e delta-spar
 
 ## O que o dado real me ensinou (bugs achados e corrigidos)
 
+- **Time travel que vencia em uma semana.** O gold lê cada versão do governo por time travel da silver. A primeira execução de ponta a ponta pelo Airflow (21/10/2026) falhou no gold: o Delta recusa voltar além de `delta.deletedFileRetentionDuration` (7 dias por padrão), mesmo sem nenhum VACUUM, e as versões tinham sido congeladas duas semanas antes. Os testes não pegavam porque as tabelas deles têm segundos de vida. A silver agora declara retenção longa de arquivos e de log (D45); depois da correção, a execução pelo Airflow reproduziu todos os números publicados.
 - **"99,7% das linhas mudaram" era efeito de formato.** A primeira comparação entre versões usava o hash do texto cru, e quase toda linha de 2021 "mudava" do One Year para o Three Year. Coluna por coluna, num estado, a causa eram duas coisas que não são revisão dos bancos:
   - o Snapshot e o One Year gravam números como ponto flutuante (`2560.0`, `2.6499999999999999`), e o Three Year guarda o texto do banco (`2560.00`, `00120`);
   - o governo recalculou os campos de censo em todas as linhas.
@@ -99,8 +100,11 @@ docker compose run --rm spark python -m hmda.dq                   # sai com 1 se
 docker compose run --rm spark python -m hmda.revisoes
 docker compose run --rm spark python -m hmda.gold
 docker compose run --rm spark python -m hmda.exportar_site
-# 3. Testes (64 testes, ~19 min: cada um monta tabelas Delta pequenas; nada é baixado)
+# 3. Testes (87 testes, de 20 a 30 min: cada um monta tabelas Delta pequenas; nada é baixado)
 docker compose run --rm spark pytest
+# 4. Orquestração (opcional): Airflow 3.3 em cima da mesma imagem, interface em http://127.0.0.1:8080
+docker compose --profile airflow build airflow
+docker compose --profile airflow up -d airflow
 ```
 
 ## Catálogo de tabelas e poda de partições (medido)

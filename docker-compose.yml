@@ -25,5 +25,36 @@ services:
     # Spark local usa memória compartilhada para o shuffle.
     shm_size: 2g
 
+  # Orquestração (D44): Airflow em cima da mesma imagem, com os mesmos volumes.
+  #   docker compose --profile airflow up -d airflow     → http://127.0.0.1:8080
+  airflow:
+    profiles: ["airflow"]
+    build:
+      context: .
+      dockerfile: airflow/Dockerfile
+    image: us-mortgage-lakehouse-airflow:local
+    working_dir: /app
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      HMDA_DADOS: /dados
+      HMDA_LAKE: /lake
+      # Só no PC, porta presa ao 127.0.0.1: sem tela de login (todos são administradores).
+      AIRFLOW__CORE__SIMPLE_AUTH_MANAGER_ALL_ADMINS: "True"
+    ports:
+      - "127.0.0.1:8080:8080"
+    volumes:
+      - ./src:/app/src
+      - ./docs:/app/docs
+      - ./site:/app/site
+      - ./airflow/dags:/opt/airflow/dags
+      - ./airflow/test_dag.py:/opt/airflow/test_dag.py
+      - ${HMDA_DADOS_HOST:-C:/dados/hmda}:/dados
+      - lake:/lake
+      - airflow_home:/opt/airflow/estado
+    shm_size: 2g
+
 volumes:
   lake:
+  airflow_home:

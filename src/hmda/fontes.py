@@ -22,6 +22,15 @@ DISPONIVEIS: dict[str, frozenset[int]] = {
 PRIMEIRO_ANO = 2018
 
 
+def url_de(ano: int, versao: str) -> str:
+    """URL do arquivo nacional, mesmo de um ano/versão que o projeto ainda não usa
+    (o vigia de publicações pergunta por eles para saber se já saíram)."""
+    if versao == "snapshot":
+        return f"{BASE}/snapshot/{ano}/{ano}_public_lar_csv.zip"
+    pasta = versao.replace("_", "-")
+    return f"{BASE}/{pasta}/{ano}/{ano}_public_lar_{versao}_csv.zip"
+
+
 @dataclass(frozen=True)
 class Fonte:
     ano: int
@@ -37,10 +46,7 @@ class Fonte:
 
     @property
     def url(self) -> str:
-        if self.versao == "snapshot":
-            return f"{BASE}/snapshot/{self.ano}/{self.ano}_public_lar_csv.zip"
-        pasta = self.versao.replace("_", "-")
-        return f"{BASE}/{pasta}/{self.ano}/{self.ano}_public_lar_{self.versao}_csv.zip"
+        return url_de(self.ano, self.versao)
 
     @property
     def chave(self) -> str:

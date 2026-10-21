@@ -375,6 +375,27 @@ def aplicar_restricoes(spark: SparkSession, caminho: str) -> None:
             spark.sql(f"ALTER TABLE delta.`{caminho}` ADD CONSTRAINT {nome} CHECK ({regra})")
 
 
+# O gold lê cada versão do governo por time travel da silver (D26). O Delta só
+# deixa voltar até `deletedFileRetentionDuration` (7 dias por padrão), mesmo sem
+# VACUUM: com o padrão, o gold quebrava uma semana depois de congelar uma versão
+# (D45). O projeto nunca roda VACUUM, então a retenção declarada acompanha isso.
+# As duas vão sempre juntas, com o log primeiro: o Delta 4.4 recusa a retenção
+# dos arquivos maior que a do log e, se ela vier sozinha numa instrução, compara
+# com o padrão do log (30 dias), não com o valor já gravado na tabela (medido).
+RETENCAO = {
+    "delta.logRetentionDuration": "interval 3650 days",
+    "delta.deletedFileRetentionDuration": "interval 3650 days",
+}
+
+
+def garantir_retencao(spark: SparkSession, caminho: str) -> None:
+    """Declara a retenção longa na tabela; só grava se estiver diferente."""
+    atuais = DeltaTable.forPath(spark, caminho).detail().collect()[0]["properties"]
+    if any(atuais.get(k) != v for k, v in RETENCAO.items()):
+        props = ", ".join(f"'{k}' = '{v}'" for k, v in RETENCAO.items())
+        spark.sql(f"ALTER TABLE delta.`{caminho}` SET TBLPROPERTIES ({props})")
+
+
 def versao_vigente(spark: SparkSession, raiz: Path, ano: int) -> dict[str, Any] | None:
     caminho = tabelas.caminho(raiz, tabelas.SILVER_VERSOES)
     if not DeltaTable.isDeltaTable(spark, caminho):
@@ -392,6 +413,9 @@ def versao_vigente(spark: SparkSession, raiz: Path, ano: int) -> dict[str, Any] 
 
 def aplicar(spark: SparkSession, fonte: Fonte, raiz: Path, forcar: bool = False) -> dict[str, Any]:
     """Torna `fonte` a versão vigente do seu ano na silver."""
+    caminho = tabelas.caminho(raiz, tabelas.SILVER)
+    if DeltaTable.isDeltaTable(spark, caminho):
+        garantir_retencao(spark, caminho)  # também quando não há nada a fazer
     atual = versao_vigente(spark, raiz, fonte.ano)
     if atual and not forcar:
         if atual["versao"] == fonte.versao:
@@ -415,7 +439,6 @@ def aplicar(spark: SparkSession, fonte: Fonte, raiz: Path, forcar: bool = False)
     df = transformar(bronze, com_bruto=False).withColumn("congelado_em", F.lit(congelado_em(fonte)))
     validas = df.where(F.col("_rejeicoes") == "").drop("_rejeicoes")
 
-    caminho = tabelas.caminho(raiz, tabelas.SILVER)
     filtro = f"ano = {fonte.ano}"  # Fonte já validou o ano (int)
     escrita = validas.write.format("delta").partitionBy("ano")
     nova = not DeltaTable.isDeltaTable(spark, caminho)
@@ -427,6 +450,7 @@ def aplicar(spark: SparkSession, fonte: Fonte, raiz: Path, forcar: bool = False)
     versao_delta = DeltaTable.forPath(spark, caminho).history(1).collect()[0]["version"]
     if nova:
         aplicar_restricoes(spark, caminho)
+        garantir_retencao(spark, caminho)
 
     gravada = spark.read.format("delta").option("versionAsOf", versao_delta).load(caminho)
     gravada = gravada.where(F.col("ano") == fonte.ano)
