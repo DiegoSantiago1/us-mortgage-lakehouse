@@ -530,7 +530,7 @@
     }
     const fatos = document.getElementById("fatos");
     fatos.replaceChildren();
-    for (let i = 1; i <= 8; i++) {
+    for (let i = 1; i <= 9; i++) {
       const li = document.createElement("li");
       li.innerHTML = t("fato." + i); // texto fixo da própria página, sem dado externo
       fatos.appendChild(li);
@@ -541,6 +541,7 @@
   function aplicarTextos() {
     document.documentElement.lang = idioma === "pt" ? "pt-BR" : "en";
     for (const el of document.querySelectorAll("[data-i18n]")) el.textContent = t(el.dataset.i18n);
+    for (const el of document.querySelectorAll("[data-i18n-alt]")) el.alt = t(el.dataset.i18nAlt);
     document.getElementById("idioma").textContent = idioma === "pt" ? "EN" : "PT";
     const nav = document.getElementById("nav-capitulos");
     nav.replaceChildren();

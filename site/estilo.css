@@ -6,7 +6,7 @@
   --superficie: #fbfaf7;
   --tinta: #121826;
   --tinta-2: #4a4f5c;
-  --mudo: #7d818b;
+  --mudo: #686c76;
   --grade: #e6e2d8;
   --eixo: #c9c4b6;
   --borda: rgba(18, 24, 38, 0.10);
@@ -97,7 +97,6 @@ a { color: var(--acento); }
   position: sticky; top: 0; z-index: 20;
   background: color-mix(in srgb, var(--pagina) 86%, transparent);
   backdrop-filter: blur(10px);
-  border-bottom: 1px solid var(--borda);
 }
 .topo-in {
   max-width: 1180px; margin: 0 auto; padding: 10px 16px;
@@ -131,42 +130,43 @@ main { max-width: 1180px; margin: 0 auto; padding: 0 16px; }
 
 /* Abertura */
 .hero { padding: 72px 0 48px; }
-.sobretitulo {
-  text-transform: uppercase; letter-spacing: .12em; font-size: 12px; font-weight: 700;
-  color: var(--acento); margin: 0 0 16px;
-}
 h1 {
-  font-size: clamp(32px, 5.4vw, 60px); line-height: 1.05; letter-spacing: -.035em;
-  margin: 0 0 20px; max-width: 18ch;
+  font-size: clamp(30px, 7vw, 92px); line-height: 1.02; letter-spacing: -.035em;
+  margin: 0 0 24px; max-width: 20ch;
 }
-.lead { font-size: clamp(17px, 2vw, 21px); color: var(--tinta-2); max-width: 62ch; margin: 0 0 32px; }
+.lead { font-size: clamp(17px, 2vw, 21px); color: var(--tinta-2); max-width: 62ch; margin: 0 0 24px; }
+.acoes { display: flex; flex-wrap: wrap; gap: 12px; margin: 24px 0 0; }
 .nota-hero {
   margin-top: 28px; padding-left: 14px; border-left: 3px solid var(--acento);
   color: var(--tinta-2); font-style: italic; max-width: 70ch;
 }
 .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; }
 .tile {
-  background: var(--superficie); border: 1px solid var(--borda); border-radius: 14px;
-  padding: 18px 18px 16px; box-shadow: var(--sombra);
+  background: var(--superficie); border-radius: 14px;
+  padding: 18px 18px 16px;
 }
 .tile .valor { font-size: 34px; font-weight: 700; letter-spacing: -.02em; line-height: 1.1; }
 .tile .rotulo { color: var(--tinta-2); font-size: 14px; margin-top: 6px; }
 
 /* Capítulos */
-.capitulo { padding: 56px 0; border-top: 1px solid var(--borda); }
-.num { font-size: 13px; font-weight: 800; color: var(--acento); letter-spacing: .1em; margin: 0; }
+.capitulo { padding: 64px 0; }
 h2 { font-size: clamp(26px, 3.6vw, 40px); line-height: 1.12; letter-spacing: -.025em; margin: 6px 0 14px; max-width: 24ch; }
 .capitulo > p { max-width: 70ch; color: var(--tinta-2); }
 
 .figura {
-  margin: 20px 0 0; background: var(--superficie); border: 1px solid var(--borda);
-  border-radius: 16px; padding: 16px 16px 12px; box-shadow: var(--sombra); min-width: 0;
+  margin: 20px 0 0; background: var(--superficie);
+  border-radius: 16px; padding: 16px 16px 12px; min-width: 0;
 }
 .figura figcaption { font-size: 14px; font-weight: 600; color: var(--tinta); margin-bottom: 8px; }
 .dupla { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 .dupla .larga { grid-column: span 1; }
 @media (max-width: 860px) { .dupla { grid-template-columns: 1fr; } }
 .grafico { width: 100%; position: relative; }
+.telas { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; margin: 28px 0 8px; align-items: start; }
+@media (max-width: 860px) { .telas { grid-template-columns: minmax(0, 1fr); } }
+.telas figure { margin: 0; }
+.telas img { display: block; width: 100%; height: auto; border-radius: 12px; background: #fff; }
+.telas figcaption { font-size: 14px; color: var(--tinta-2); margin-top: 8px; }
 .grafico svg { display: block; width: 100%; height: auto; overflow: visible; }
 .mapa svg path.estado { stroke: var(--superficie); stroke-width: 1; cursor: pointer; }
 .mapa svg path.estado:hover, .mapa svg path.estado:focus { stroke: var(--tinta); stroke-width: 1.5; outline: none; }
@@ -231,7 +231,7 @@ th { color: var(--tinta-2); font-weight: 600; }
 .tooltip .t-linha b { font-variant-numeric: tabular-nums; }
 .tooltip .t-chave { width: 12px; height: 2px; border-radius: 1px; display: inline-block; }
 
-.rodape { max-width: 1180px; margin: 40px auto 0; padding: 32px 16px 48px; border-top: 1px solid var(--borda); color: var(--mudo); font-size: 14px; }
+.rodape { max-width: 1180px; margin: 40px auto 0; padding: 32px 16px 48px; color: var(--mudo); font-size: 14px; }
 .rodape p { margin: 4px 0; }
 
 @media (max-width: 640px) {
